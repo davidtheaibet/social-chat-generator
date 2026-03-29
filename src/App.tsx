@@ -2,6 +2,10 @@ import { useRef } from 'react';
 import { useAppStore } from './stores/appStore';
 import { Editor } from './components/Editor';
 import { WhatsAppPreview } from './platforms/WhatsApp';
+import { InstagramPreview } from './platforms/Instagram';
+import { SnapchatPreview } from './platforms/Snapchat';
+import { MessengerPreview } from './platforms/Messenger';
+import { TikTokPreview } from './platforms/TikTok';
 import { Camera } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
@@ -88,7 +92,18 @@ function App() {
                   {currentPlatform === 'whatsapp' && (
                     <WhatsAppPreview containerRef={previewRef} />
                   )}
-                  {/* Other platforms will be added here */}
+                  {currentPlatform === 'instagram' && (
+                    <InstagramPreview containerRef={previewRef} />
+                  )}
+                  {currentPlatform === 'snapchat' && (
+                    <SnapchatPreview containerRef={previewRef} />
+                  )}
+                  {currentPlatform === 'messenger' && (
+                    <MessengerPreview containerRef={previewRef} />
+                  )}
+                  {currentPlatform === 'tiktok' && (
+                    <TikTokPreview containerRef={previewRef} />
+                  )}
                 </div>
               </div>
               
