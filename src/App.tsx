@@ -39,6 +39,17 @@ function App() {
       url.searchParams.delete('premium_token');
       window.history.replaceState({}, '', url.toString());
     }
+
+    const sessionId = params.get('session_id');
+    const payment = params.get('payment');
+    if (payment === 'success' && sessionId) {
+      exchangeSessionForToken(sessionId);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('payment');
+      url.searchParams.delete('session_id');
+      window.history.replaceState({}, '', url.toString());
+    }
+
     const saved = localStorage.getItem('premium_token');
     if (saved && !isPremium) {
       verifyPremiumToken(saved);
@@ -53,6 +64,20 @@ function App() {
         if (data.isPremium) {
           setPremium(true);
           localStorage.setItem('premium_token', token);
+        }
+      }
+    } catch {
+      // silently fail
+    }
+  };
+
+  const exchangeSessionForToken = async (sessionId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/checkout-success?session_id=${encodeURIComponent(sessionId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.premium_token) {
+          await verifyPremiumToken(data.premium_token);
         }
       }
     } catch {

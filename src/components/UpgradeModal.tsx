@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Crown, X, Loader2, Check, Zap, Infinity } from 'lucide-react';
+import { Crown, X, Loader2 } from 'lucide-react';
 
 interface UpgradeModalProps {
   onClose: () => void;
