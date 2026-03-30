@@ -24,12 +24,24 @@ function App() {
   // Check for premium return from Stripe
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
+    // Handle direct premium_token in URL (legacy / manual flow)
     const token = params.get('premium_token');
     if (token) {
       verifyPremiumToken(token);
-      // Clean URL
       const url = new URL(window.location.href);
       url.searchParams.delete('premium_token');
+      window.history.replaceState({}, '', url.toString());
+    }
+
+    // Handle Stripe success redirect with session_id
+    const sessionId = params.get('session_id');
+    const payment = params.get('payment');
+    if (payment === 'success' && sessionId) {
+      exchangeSessionForToken(sessionId);
+      const url = new URL(window.location.href);
+      url.searchParams.delete('payment');
+      url.searchParams.delete('session_id');
       window.history.replaceState({}, '', url.toString());
     }
 
@@ -48,6 +60,20 @@ function App() {
         if (data.isPremium) {
           setPremium(true);
           localStorage.setItem('premium_token', token);
+        }
+      }
+    } catch {
+      // silently fail; not critical
+    }
+  };
+
+  const exchangeSessionForToken = async (sessionId: string) => {
+    try {
+      const res = await fetch(`${API_BASE}/api/checkout-success?session_id=${encodeURIComponent(sessionId)}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (data.premium_token) {
+          await verifyPremiumToken(data.premium_token);
         }
       }
     } catch {
