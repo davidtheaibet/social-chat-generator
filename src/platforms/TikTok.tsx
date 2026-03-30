@@ -1,111 +1,203 @@
-// TikTok Preview Component
 import { useAppStore } from '../stores/appStore';
-import { Heart, MessageCircle } from 'lucide-react';
 
 interface TikTokPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
 }
 
+const StatusBar: React.FC = () => (
+  <div
+    style={{
+      height: '22px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      padding: '0 14px',
+      background: '#121212',
+    }}
+  >
+    <span style={{ fontSize: '11px', fontWeight: 700, color: 'white', letterSpacing: '-0.2px' }}>
+      9:41
+    </span>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="none">
+        <rect x="0" y="6.5" width="2.5" height="4.5" rx="0.5" fill="white" />
+        <rect x="4" y="4.5" width="2.5" height="6.5" rx="0.5" fill="white" />
+        <rect x="8" y="2.5" width="2.5" height="8.5" rx="0.5" fill="white" />
+        <rect x="12" y="0" width="2.5" height="11" rx="0.5" fill="white" />
+      </svg>
+      <svg width="15" height="11" viewBox="0 0 15 11" fill="none">
+        <circle cx="7.5" cy="10" r="1.2" fill="white" />
+        <path d="M4.5 7C5.5 6 6.5 5.5 7.5 5.5C8.5 5.5 9.5 6 10.5 7" stroke="white" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+        <path d="M2 4.5C3.8 2.7 5.5 1.8 7.5 1.8C9.5 1.8 11.2 2.7 13 4.5" stroke="white" strokeWidth="1.3" strokeLinecap="round" fill="none" />
+      </svg>
+      <svg width="23" height="11" viewBox="0 0 23 11" fill="none">
+        <rect x="0.5" y="0.5" width="19" height="10" rx="2.5" stroke="white" strokeWidth="1" />
+        <rect x="20.5" y="3" width="2" height="5" rx="1" fill="white" />
+        <rect x="2" y="2" width="14" height="7" rx="1.5" fill="white" />
+      </svg>
+    </div>
+  </div>
+);
+
 export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) => {
-  const { contact, messages, isPremium } = useAppStore();
-  
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', { 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true 
-    }).toLowerCase();
-  };
-  
+  const { contact, messages } = useAppStore();
+
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="w-[375px] h-[667px] bg-black relative overflow-hidden flex flex-col"
+      style={{
+        width: '280px',
+        height: '580px',
+        background: '#121212',
+        position: 'relative',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
     >
-      {/* Header */}
-      <div className="bg-black px-4 py-3 flex items-center justify-between border-b border-gray-800">
-        <button className="text-white">←</button>
-        <h3 className="font-semibold text-white">Comments</h3>
-        <button className="text-white">✕</button>
-      </div>
-      
-      {/* Video Preview Area */}
-      <div className="h-48 bg-gradient-to-b from-purple-900 to-black flex items-center justify-center">
-        <div className="text-center text-white">
-          <div className="w-16 h-16 mx-auto mb-2 bg-white/20 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M8 5v14l11-7z"/>
-            </svg>
+      <StatusBar />
+
+      {/* Chat header */}
+      <div
+        style={{
+          background: '#1A1A1A',
+          padding: '8px 12px 10px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          borderBottom: '1px solid #2A2A2A',
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white" opacity={0.9}>
+          <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
+        </svg>
+        {contact.photo ? (
+          <img src={contact.photo} alt="" style={{ width: '36px', height: '36px', borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+        ) : (
+          <div
+            style={{
+              width: '36px',
+              height: '36px',
+              borderRadius: '50%',
+              background: '#2A2A2A',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              fontWeight: 700,
+              fontSize: '15px',
+              flexShrink: 0,
+            }}
+          >
+            {contact.name.charAt(0).toUpperCase()}
           </div>
-          <p className="text-sm">Video Preview</p>
+        )}
+        <div style={{ flex: 1 }}>
+          <div style={{ fontWeight: 600, fontSize: '14px', color: 'white', lineHeight: 1.2 }}>
+            {contact.name}
+          </div>
+          <div style={{ fontSize: '11px', color: '#888', lineHeight: 1 }}>
+            {contact.status || 'TikTok'}
+          </div>
         </div>
+        {/* TikTok call icon */}
+        <svg width="18" height="18" fill="white" opacity={0.8} viewBox="0 0 24 24">
+          <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" />
+        </svg>
       </div>
-      
-      {/* Comments Section */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-black">
+
+      {/* Messages */}
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'auto',
+          padding: '12px 10px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '6px',
+          background: '#121212',
+        }}
+      >
         {messages.length === 0 ? (
-          <div className="text-center text-gray-500 mt-10">
-            <p className="text-sm">No comments yet</p>
-            <p className="text-xs">Add comments using the editor</p>
+          <div style={{ textAlign: 'center', marginTop: '60px' }}>
+            <p style={{ fontSize: '13px', color: '#555' }}>No messages yet</p>
           </div>
         ) : (
           messages.map((message) => (
-            <div data-msg-bubble key={message.id} className="flex gap-3">
-              {contact.photo ? (
-                <img src={contact.photo} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
-              ) : (
-                <div className="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold flex-shrink-0">
-                  {contact.name.charAt(0).toUpperCase()}
-                </div>
-              )}
-              <div className="flex-1">
-                <div className="flex items-baseline gap-2">
-                  <span className="font-semibold text-white text-sm">{contact.name}</span>
-                  <span className="text-gray-500 text-xs">{formatTime(message.timestamp)}</span>
-                </div>
-                {message.type === 'image' ? (
-                  <img src={message.content} alt="" className="rounded-lg mt-1 max-w-full" />
+            <div
+              key={message.id}
+              style={{
+                display: 'flex',
+                justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
+                alignItems: 'flex-end',
+                gap: '6px',
+              }}
+            >
+              {message.sender === 'contact' && (
+                contact.photo ? (
+                  <img src={contact.photo} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
                 ) : (
-                  <p className="text-white text-sm mt-1">{message.content}</p>
+                  <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#2A2A2A', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', color: 'white', flexShrink: 0 }}>
+                    {contact.name.charAt(0)}
+                  </div>
+                )
+              )}
+              <div
+                style={{
+                  maxWidth: '70%',
+                  padding: '8px 12px',
+                  borderRadius: '16px',
+                  background: message.sender === 'me' ? '#FE2C55' : '#2A2A2A',
+                  color: 'white',
+                }}
+              >
+                {message.type === 'image' ? (
+                  <img src={message.content} alt="" style={{ borderRadius: '8px', maxWidth: '100%' }} />
+                ) : (
+                  <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
                 )}
-                <div className="flex items-center gap-4 mt-2">
-                  <button className="flex items-center gap-1 text-gray-400 text-xs">
-                    <Heart className="w-4 h-4" />
-                    <span>24</span>
-                  </button>
-                  <button className="flex items-center gap-1 text-gray-400 text-xs">
-                    <MessageCircle className="w-4 h-4" />
-                    <span>Reply</span>
-                  </button>
-                </div>
+                <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', margin: '2px 0 0', textAlign: 'right' }}>
+                  {formatTime(message.timestamp)}
+                </p>
               </div>
             </div>
           ))
         )}
       </div>
-      
-      {/* Input Area */}
-      <div className="bg-black px-3 py-3 flex items-center gap-2 border-t border-gray-800">
+
+      {/* Input area */}
+      <div
+        style={{
+          padding: '8px 10px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          borderTop: '1px solid #2A2A2A',
+          background: '#1A1A1A',
+        }}
+      >
         {contact.photo ? (
-          <img src={contact.photo} alt="" className="w-8 h-8 rounded-full object-cover" />
+          <img src={contact.photo} alt="" style={{ width: 30, height: 30, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white text-xs">
-            {contact.name.charAt(0).toUpperCase()}
+          <div style={{ width: 30, height: 30, borderRadius: '50%', background: '#2A2A2A', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', flexShrink: 0 }}>
+            {contact.name.charAt(0)}
           </div>
         )}
-        <div className="flex-1 bg-[#1a1a1a] rounded-full px-4 py-2 flex items-center">
-          <span className="text-gray-500 text-sm">Add comment...</span>
+        <div
+          style={{
+            flex: 1,
+            background: '#2A2A2A',
+            borderRadius: '20px',
+            padding: '7px 14px',
+          }}
+        >
+          <span style={{ fontSize: '13px', color: '#555' }}>Message...</span>
         </div>
-        <span className="text-gray-400 text-sm">@</span>
-        <span className="text-gray-400 text-sm">😊</span>
+        <span style={{ fontSize: '18px' }}>😊</span>
       </div>
-      
-      {/* Watermark */}
-      {!isPremium && (
-        <div className="absolute bottom-16 right-4 bg-black/70 text-white text-xs px-2 py-1 rounded">
-          social-chat-generator.app
-        </div>
-      )}
     </div>
   );
 };

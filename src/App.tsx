@@ -8,12 +8,20 @@ import { InstagramPreview } from './platforms/Instagram';
 import { SnapchatPreview } from './platforms/Snapchat';
 import { MessengerPreview } from './platforms/Messenger';
 import { TikTokPreview } from './platforms/TikTok';
-import { Camera, Crown } from 'lucide-react';
+import { Camera } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '';
 
 type MobileTab = 'editor' | 'preview';
+
+// Minimal ChatFake logo icon
+const ChatFakeLogo = () => (
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+    <rect width="20" height="20" rx="5" fill="#6366F1" />
+    <path d="M5 7h10M5 10h7M5 13h5" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
 
 function App() {
   const { currentPlatform, isPremium, setPremium, messages } = useAppStore();
@@ -21,19 +29,15 @@ function App() {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>('editor');
 
-  // Check for premium return from Stripe
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const token = params.get('premium_token');
     if (token) {
       verifyPremiumToken(token);
-      // Clean URL
       const url = new URL(window.location.href);
       url.searchParams.delete('premium_token');
       window.history.replaceState({}, '', url.toString());
     }
-
-    // Restore saved premium token
     const saved = localStorage.getItem('premium_token');
     if (saved && !isPremium) {
       verifyPremiumToken(saved);
@@ -51,7 +55,7 @@ function App() {
         }
       }
     } catch {
-      // silently fail; not critical
+      // silently fail
     }
   };
 
@@ -91,110 +95,162 @@ function App() {
     }
   };
 
-  const PreviewPanel = (
-    <div className="flex-1 w-full flex flex-col items-center">
-      <h2 className="text-lg font-semibold text-gray-700 mb-4 hidden lg:block">Preview</h2>
-
-      {/* Phone Frame */}
-      <div className="relative">
-        <div className="bg-gray-800 rounded-[3rem] p-3 shadow-2xl">
-          <div className="bg-black rounded-[2.5rem] overflow-hidden">
-            {currentPlatform === 'whatsapp' && <WhatsAppPreview containerRef={previewRef} />}
-            {currentPlatform === 'instagram' && <InstagramPreview containerRef={previewRef} />}
-            {currentPlatform === 'snapchat' && <SnapchatPreview containerRef={previewRef} />}
-            {currentPlatform === 'messenger' && <MessengerPreview containerRef={previewRef} />}
-            {currentPlatform === 'tiktok' && <TikTokPreview containerRef={previewRef} />}
-          </div>
-        </div>
-
-        {/* Export Button */}
-        <button
-          onClick={handleExport}
-          disabled={messages.length === 0}
-          className="absolute -bottom-4 left-1/2 transform -translate-x-1/2 px-6 py-3 bg-blue-600 text-white rounded-full font-semibold shadow-lg hover:bg-blue-700 hover:shadow-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 whitespace-nowrap"
-        >
-          <Camera className="w-5 h-5" />
-          Screenshot
-        </button>
+  const PhonePreview = (
+    <div className="flex flex-col items-center gap-6">
+      {/* Phone frame */}
+      <div
+        style={{
+          border: '8px solid #1C1C1E',
+          borderRadius: '44px',
+          boxShadow: '0 30px 70px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.06)',
+          overflow: 'hidden',
+          background: '#000',
+          display: 'inline-block',
+        }}
+      >
+        {currentPlatform === 'whatsapp' && <WhatsAppPreview containerRef={previewRef} />}
+        {currentPlatform === 'instagram' && <InstagramPreview containerRef={previewRef} />}
+        {currentPlatform === 'snapchat' && <SnapchatPreview containerRef={previewRef} />}
+        {currentPlatform === 'messenger' && <MessengerPreview containerRef={previewRef} />}
+        {currentPlatform === 'tiktok' && <TikTokPreview containerRef={previewRef} />}
       </div>
 
-      {/* Video Export + info */}
-      <div className="mt-10 flex flex-col items-center gap-3">
+      {/* Screenshot button */}
+      <button
+        onClick={handleExport}
+        disabled={messages.length === 0}
+        className="flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+        style={{
+          background: messages.length === 0 ? '#9CA3AF' : 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+          boxShadow: messages.length > 0 ? '0 4px 14px rgba(99,102,241,0.4)' : 'none',
+        }}
+      >
+        <Camera className="w-4 h-4" />
+        Screenshot
+      </button>
+
+      {/* Video export */}
+      <div className="flex flex-col items-center gap-2">
         <VideoExport previewRef={previewRef} onUpgradeClick={() => setShowUpgrade(true)} />
-        <p className="text-sm text-gray-500 text-center max-w-sm">
+        <p className="text-xs text-center" style={{ color: '#9CA3AF' }}>
           {isPremium
-            ? 'Premium: No watermark, unlimited messages, MP4 export'
-            : 'Free: Watermark on exports, max 20 messages'}
+            ? 'Premium: No watermark · MP4 export · Unlimited messages'
+            : 'Free: Watermark on exports · Max 20 messages'}
         </p>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <h1 className="text-xl font-bold text-gray-900 leading-tight">
-            Social Chat Generator
-          </h1>
+    <div className="min-h-screen" style={{ background: '#F8F9FC' }}>
+      {/* Top Nav */}
+      <header
+        className="sticky top-0 z-40 bg-white"
+        style={{ borderBottom: '1px solid #F3F4F6', height: '56px' }}
+      >
+        <div
+          className="max-w-7xl mx-auto h-full flex items-center justify-between"
+          style={{ padding: '0 32px' }}
+        >
           <div className="flex items-center gap-2">
-            {!isPremium ? (
-              <button
-                onClick={() => setShowUpgrade(true)}
-                className="px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-semibold text-sm hover:shadow-lg transition-shadow flex items-center gap-1"
-              >
-                <Crown className="w-4 h-4" />
-                Upgrade
-              </button>
-            ) : (
-              <span className="px-4 py-2 bg-green-100 text-green-700 rounded-full font-semibold text-sm flex items-center gap-2">
-                ✨ Premium
-              </span>
-            )}
+            <ChatFakeLogo />
+            <span style={{ fontSize: '16px', fontWeight: 600, color: '#111827' }}>
+              ChatFake
+            </span>
           </div>
+          <button
+            onClick={() => setShowUpgrade(true)}
+            className="transition-colors"
+            style={{
+              height: '36px',
+              padding: '0 16px',
+              borderRadius: '8px',
+              border: '1.5px solid #6366F1',
+              color: '#6366F1',
+              fontSize: '14px',
+              fontWeight: 600,
+              background: 'white',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={(e) => {
+              (e.target as HTMLButtonElement).style.background = '#EEF2FF';
+            }}
+            onMouseLeave={(e) => {
+              (e.target as HTMLButtonElement).style.background = 'white';
+            }}
+          >
+            {isPremium ? '✦ Premium' : 'Upgrade'}
+          </button>
         </div>
       </header>
 
-      {/* Mobile Tab Switcher */}
-      <div className="lg:hidden flex border-b bg-white sticky top-[57px] z-30">
+      {/* Mobile tab switcher */}
+      <div
+        className="lg:hidden flex bg-white sticky z-30"
+        style={{ top: '56px', borderBottom: '1px solid #F3F4F6' }}
+      >
         {(['editor', 'preview'] as MobileTab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setMobileTab(tab)}
-            className={`flex-1 py-3 text-sm font-semibold capitalize transition-colors ${
-              mobileTab === tab
-                ? 'border-b-2 border-blue-600 text-blue-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className="flex-1 py-3 text-sm font-semibold capitalize transition-colors"
+            style={{
+              borderBottom: mobileTab === tab ? '2px solid #6366F1' : '2px solid transparent',
+              color: mobileTab === tab ? '#6366F1' : '#6B7280',
+            }}
           >
             {tab}
           </button>
         ))}
       </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 py-6">
-        {/* Desktop: side by side */}
+      {/* Main content */}
+      <main className="max-w-7xl mx-auto" style={{ padding: '32px 32px' }}>
+        {/* Desktop: 40/60 split */}
         <div className="hidden lg:flex gap-8 items-start">
-          <div className="flex-1 w-full">
-            <Editor />
+          <div style={{ width: '40%' }}>
+            <Editor onUpgradeClick={() => setShowUpgrade(true)} />
           </div>
-          {PreviewPanel}
+          <div
+            style={{ width: '60%' }}
+            className="flex items-center justify-center"
+          >
+            <div
+              className="w-full flex flex-col items-center justify-center"
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                padding: '40px 24px',
+                minHeight: '720px',
+              }}
+            >
+              {PhonePreview}
+            </div>
+          </div>
         </div>
 
         {/* Mobile: tab-switched */}
         <div className="lg:hidden">
           {mobileTab === 'editor' && (
-            <div className="w-full">
-              <Editor />
+            <Editor onUpgradeClick={() => setShowUpgrade(true)} />
+          )}
+          {mobileTab === 'preview' && (
+            <div
+              className="flex flex-col items-center"
+              style={{
+                background: 'white',
+                borderRadius: '16px',
+                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                padding: '32px 16px',
+              }}
+            >
+              {PhonePreview}
             </div>
           )}
-          {mobileTab === 'preview' && PreviewPanel}
         </div>
       </main>
 
-      {/* Upgrade Modal */}
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
     </div>
   );

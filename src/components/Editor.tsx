@@ -1,9 +1,39 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore, type Platform } from '../stores/appStore';
-import { Trash2, Plus, Crown, Pencil, Check, X } from 'lucide-react';
+import { Trash2, Plus, Pencil, Check, X } from 'lucide-react';
 import { DragDropPhoto } from './DragDropPhoto';
 
-export const Editor: React.FC = () => {
+interface EditorProps {
+  onUpgradeClick: () => void;
+}
+
+// Simple platform icons as colored SVG marks
+const PlatformIcon: React.FC<{ platform: string; size?: number }> = ({ platform, size = 14 }) => {
+  const colors: Record<string, string> = {
+    whatsapp: '#25D366',
+    instagram: '#E4405F',
+    snapchat: '#FFFC00',
+    messenger: '#0084FF',
+    tiktok: '#FE2C55',
+  };
+
+  return (
+    <span
+      style={{
+        width: size + 4,
+        height: size + 4,
+        borderRadius: '50%',
+        background: colors[platform] || '#6B7280',
+        display: 'inline-flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexShrink: 0,
+      }}
+    />
+  );
+};
+
+export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
   const {
     currentPlatform,
     setPlatform,
@@ -24,12 +54,12 @@ export const Editor: React.FC = () => {
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
 
-  const platforms: { id: Platform; name: string; color: string }[] = [
-    { id: 'whatsapp', name: 'WhatsApp', color: '#25D366' },
-    { id: 'instagram', name: 'Instagram', color: '#E4405F' },
-    { id: 'snapchat', name: 'Snapchat', color: '#FFFC00' },
-    { id: 'messenger', name: 'Messenger', color: '#0084FF' },
-    { id: 'tiktok', name: 'TikTok', color: '#000000' },
+  const platforms: { id: Platform; name: string }[] = [
+    { id: 'whatsapp', name: 'WhatsApp' },
+    { id: 'instagram', name: 'Instagram' },
+    { id: 'snapchat', name: 'Snapchat' },
+    { id: 'messenger', name: 'Messenger' },
+    { id: 'tiktok', name: 'TikTok' },
   ];
 
   const handleAddMessage = () => {
@@ -78,207 +108,406 @@ export const Editor: React.FC = () => {
     }
   }, [editingId]);
 
+  const cardStyle: React.CSSProperties = {
+    background: 'white',
+    borderRadius: '16px',
+    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+    padding: '24px',
+  };
+
   return (
-    <div className="w-full max-w-md bg-white rounded-lg shadow-lg p-6">
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-        🎨 Conversation Settings
-      </h2>
-
-      {/* Platform Selector */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Platform</label>
-        <div className="flex gap-2 flex-wrap">
-          {platforms.map((platform) => (
-            <button
-              key={platform.id}
-              onClick={() => setPlatform(platform.id)}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                currentPlatform === platform.id
-                  ? 'text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              style={{
-                backgroundColor: currentPlatform === platform.id ? platform.color : undefined,
-              }}
-            >
-              {platform.name}
-            </button>
-          ))}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {/* Main editor card */}
+      <div style={cardStyle}>
+        {/* Platform selector */}
+        <div style={{ marginBottom: '20px' }}>
+          <span className="section-label">PLATFORM</span>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {platforms.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => setPlatform(p.id)}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  height: '36px',
+                  padding: '0 14px',
+                  borderRadius: '20px',
+                  border: '1.5px solid',
+                  borderColor: currentPlatform === p.id ? '#6366F1' : '#E5E7EB',
+                  background: currentPlatform === p.id ? '#6366F1' : 'white',
+                  color: currentPlatform === p.id ? 'white' : '#374151',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  fontFamily: 'inherit',
+                }}
+              >
+                <PlatformIcon platform={p.id} />
+                {p.name}
+              </button>
+            ))}
+          </div>
         </div>
-      </div>
 
-      {/* Contact Settings */}
-      <div className="space-y-4 mb-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Contact Name</label>
+        {/* Contact name */}
+        <div style={{ marginBottom: '16px' }}>
+          <span className="section-label">CONTACT NAME</span>
           <input
+            className="input-field"
             type="text"
             value={contact.name}
             onChange={(e) => setContact({ name: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g. John Smith"
           />
         </div>
 
-        <DragDropPhoto
-          currentPhoto={contact.photo}
-          onPhotoChange={(photo) => setContact({ photo })}
-        />
+        {/* Contact photo */}
+        <div style={{ marginBottom: '16px' }}>
+          <DragDropPhoto
+            currentPhoto={contact.photo}
+            onPhotoChange={(photo) => setContact({ photo })}
+          />
+        </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status (optional)
-          </label>
+        {/* Status */}
+        <div style={{ marginBottom: '20px' }}>
+          <span className="section-label">STATUS</span>
           <input
+            className="input-field"
             type="text"
             value={contact.status}
             onChange={(e) => setContact({ status: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="online, typing..."
           />
         </div>
-      </div>
 
-      {/* Message Builder */}
-      <div className="border-t pt-4 mb-4">
-        <h3 className="font-semibold mb-3">Add Messages</h3>
+        {/* Divider */}
+        <div style={{ borderTop: '1px solid #F3F4F6', marginBottom: '20px' }} />
 
-        <div className="flex gap-4 mb-3">
-          <label className="flex items-center gap-2 cursor-pointer">
+        {/* Message builder */}
+        <div style={{ marginBottom: '16px' }}>
+          <span className="section-label">ADD MESSAGE</span>
+
+          {/* Sender toggle */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
+            {(['contact', 'me'] as const).map((s) => (
+              <button
+                key={s}
+                onClick={() => setSender(s)}
+                style={{
+                  flex: 1,
+                  height: '36px',
+                  borderRadius: '8px',
+                  border: '1.5px solid',
+                  borderColor: sender === s ? '#6366F1' : '#E5E7EB',
+                  background: sender === s ? '#EEF2FF' : 'white',
+                  color: sender === s ? '#6366F1' : '#6B7280',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                  fontFamily: 'inherit',
+                }}
+              >
+                {s === 'me' ? 'You send' : 'They send'}
+              </button>
+            ))}
+          </div>
+
+          {/* Message input + add button */}
+          <div style={{ display: 'flex', gap: '8px' }}>
             <input
-              type="radio"
-              name="sender"
-              checked={sender === 'me'}
-              onChange={() => setSender('me')}
-              className="w-4 h-4 text-blue-600"
+              className="input-field"
+              style={{ flex: 1 }}
+              type="text"
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleAddMessage()}
+              placeholder="Type your message..."
             />
-            <span className="text-sm font-medium">To (You send)</span>
-          </label>
-          <label className="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="sender"
-              checked={sender === 'contact'}
-              onChange={() => setSender('contact')}
-              className="w-4 h-4 text-blue-600"
-            />
-            <span className="text-sm font-medium">From (They send)</span>
-          </label>
+            <button
+              onClick={handleAddMessage}
+              disabled={!isPremium && messages.length >= 20}
+              style={{
+                height: '40px',
+                padding: '0 16px',
+                borderRadius: '8px',
+                border: 'none',
+                background: (!isPremium && messages.length >= 20) ? '#E5E7EB' : 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                color: (!isPremium && messages.length >= 20) ? '#9CA3AF' : 'white',
+                fontSize: '14px',
+                fontWeight: 600,
+                cursor: (!isPremium && messages.length >= 20) ? 'not-allowed' : 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                flexShrink: 0,
+                fontFamily: 'inherit',
+                transition: 'opacity 0.15s',
+              }}
+            >
+              <Plus className="w-4 h-4" />
+              Add
+            </button>
+          </div>
         </div>
 
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleAddMessage()}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Type your message here..."
-          />
-          <button
-            onClick={handleAddMessage}
-            disabled={!isPremium && messages.length >= 20}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors flex items-center gap-1 disabled:opacity-50 disabled:cursor-not-allowed"
+        {/* Message list */}
+        {messages.length > 0 && (
+          <div
+            style={{
+              border: '1.5px solid #E5E7EB',
+              borderRadius: '10px',
+              overflow: 'hidden',
+              maxHeight: '220px',
+              overflowY: 'auto',
+              marginBottom: '12px',
+            }}
           >
-            <Plus className="w-4 h-4" />
-            Add
+            {messages.map((msg) => (
+              <div
+                key={msg.id}
+                className="group"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  padding: '8px 12px',
+                  borderBottom: '1px solid #F9FAFB',
+                  transition: 'background 0.1s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#F9FAFB')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+              >
+                {/* Mini bubble indicator */}
+                <div
+                  style={{
+                    width: '28px',
+                    height: '18px',
+                    borderRadius: msg.sender === 'me' ? '8px 8px 2px 8px' : '8px 8px 8px 2px',
+                    background: msg.sender === 'me' ? '#6366F1' : '#E5E7EB',
+                    flexShrink: 0,
+                  }}
+                />
+                {editingId === msg.id ? (
+                  <input
+                    ref={editInputRef}
+                    value={editingText}
+                    onChange={(e) => setEditingText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') commitEdit();
+                      if (e.key === 'Escape') cancelEdit();
+                    }}
+                    onBlur={commitEdit}
+                    style={{
+                      flex: 1,
+                      fontSize: '13px',
+                      padding: '2px 8px',
+                      border: '1.5px solid #6366F1',
+                      borderRadius: '6px',
+                      outline: 'none',
+                      fontFamily: 'inherit',
+                    }}
+                  />
+                ) : (
+                  <span
+                    style={{
+                      flex: 1,
+                      fontSize: '13px',
+                      color: '#374151',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {msg.content}
+                  </span>
+                )}
+                <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
+                  {editingId === msg.id ? (
+                    <>
+                      <button onClick={commitEdit} style={{ padding: '2px', color: '#10B981' }}>
+                        <Check className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={cancelEdit} style={{ padding: '2px', color: '#9CA3AF' }}>
+                        <X className="w-3.5 h-3.5" />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => startEdit(msg.id, msg.content)}
+                        style={{ padding: '2px', color: '#6366F1' }}
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(msg.id)}
+                        style={{
+                          padding: '2px',
+                          color: pendingDeleteId === msg.id ? '#EF4444' : '#9CA3AF',
+                          background: pendingDeleteId === msg.id ? '#FEF2F2' : 'transparent',
+                          borderRadius: '4px',
+                        }}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Clear all + message count */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <button
+            onClick={clearMessages}
+            disabled={messages.length === 0}
+            style={{
+              height: '36px',
+              padding: '0 14px',
+              borderRadius: '8px',
+              border: '1.5px solid #FCA5A5',
+              background: 'white',
+              color: '#EF4444',
+              fontSize: '13px',
+              fontWeight: 500,
+              cursor: messages.length === 0 ? 'not-allowed' : 'pointer',
+              opacity: messages.length === 0 ? 0.5 : 1,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontFamily: 'inherit',
+            }}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Clear all
+          </button>
+          <span style={{ fontSize: '12px', color: '#9CA3AF' }}>
+            {messages.length} / {isPremium ? '∞' : '20'}
+            {!isPremium && messages.length >= 20 && (
+              <span style={{ color: '#EF4444', marginLeft: '4px' }}>Limit reached</span>
+            )}
+          </span>
+        </div>
+      </div>
+
+      {/* Premium section card */}
+      {!isPremium && (
+        <div
+          style={{
+            background: '#1E1B4B',
+            borderRadius: '16px',
+            padding: '20px',
+          }}
+        >
+          <p
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              letterSpacing: '0.08em',
+              textTransform: 'uppercase',
+              color: '#A5B4FC',
+              marginBottom: '14px',
+            }}
+          >
+            UPGRADE TO PREMIUM
+          </p>
+
+          {/* Two pricing cards */}
+          <div style={{ display: 'flex', gap: '10px', marginBottom: '14px' }}>
+            {/* Weekly */}
+            <div
+              style={{
+                flex: 1,
+                background: 'rgba(255,255,255,0.07)',
+                borderRadius: '12px',
+                border: '1.5px solid rgba(255,255,255,0.12)',
+                padding: '14px',
+              }}
+            >
+              <p style={{ fontSize: '18px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                $2.99
+              </p>
+              <p style={{ fontSize: '12px', color: '#A5B4FC', marginBottom: '10px' }}>per week</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {['No watermark', 'MP4 export', 'Unlimited msgs'].map((f) => (
+                  <li key={f} style={{ fontSize: '12px', color: '#C7D2FE', display: 'flex', gap: '5px' }}>
+                    <span style={{ color: '#34D399' }}>✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Lifetime */}
+            <div
+              style={{
+                flex: 1,
+                background: 'rgba(255,255,255,0.07)',
+                borderRadius: '12px',
+                border: '1.5px solid #F59E0B',
+                padding: '14px',
+                position: 'relative',
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: '-10px',
+                  left: '50%',
+                  transform: 'translateX(-50%)',
+                  background: '#F59E0B',
+                  color: '#78350F',
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  letterSpacing: '0.05em',
+                  padding: '2px 8px',
+                  borderRadius: '10px',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                BEST VALUE
+              </div>
+              <p style={{ fontSize: '18px', fontWeight: 700, color: 'white', marginBottom: '4px' }}>
+                $9.99
+              </p>
+              <p style={{ fontSize: '12px', color: '#A5B4FC', marginBottom: '10px' }}>lifetime</p>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                {['No watermark', 'MP4 export', 'Unlimited msgs'].map((f) => (
+                  <li key={f} style={{ fontSize: '12px', color: '#C7D2FE', display: 'flex', gap: '5px' }}>
+                    <span style={{ color: '#34D399' }}>✓</span> {f}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          {/* CTA button */}
+          <button
+            onClick={onUpgradeClick}
+            style={{
+              width: '100%',
+              height: '42px',
+              borderRadius: '10px',
+              border: 'none',
+              background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+              color: 'white',
+              fontSize: '14px',
+              fontWeight: 600,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+              boxShadow: '0 4px 14px rgba(99,102,241,0.4)',
+            }}
+          >
+            Unlock Premium
           </button>
         </div>
-      </div>
-
-      {/* Message List with Edit/Delete */}
-      {messages.length > 0 && (
-        <div className="border rounded-lg divide-y mb-4 max-h-56 overflow-y-auto">
-          {messages.map((msg) => (
-            <div key={msg.id} className="flex items-center gap-2 px-3 py-2 group hover:bg-gray-50">
-              <span
-                className={`w-2 h-2 rounded-full flex-shrink-0 ${
-                  msg.sender === 'me' ? 'bg-blue-500' : 'bg-gray-400'
-                }`}
-              />
-              {editingId === msg.id ? (
-                <input
-                  ref={editInputRef}
-                  value={editingText}
-                  onChange={(e) => setEditingText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') commitEdit();
-                    if (e.key === 'Escape') cancelEdit();
-                  }}
-                  onBlur={commitEdit}
-                  className="flex-1 text-sm px-2 py-1 border border-blue-400 rounded focus:outline-none focus:ring-1 focus:ring-blue-500"
-                />
-              ) : (
-                <span className="flex-1 text-sm text-gray-700 truncate">{msg.content}</span>
-              )}
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
-                {editingId === msg.id ? (
-                  <>
-                    <button onClick={commitEdit} className="p-1 text-green-600 hover:text-green-700" title="Save">
-                      <Check className="w-3.5 h-3.5" />
-                    </button>
-                    <button onClick={cancelEdit} className="p-1 text-gray-400 hover:text-gray-600" title="Cancel">
-                      <X className="w-3.5 h-3.5" />
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => startEdit(msg.id, msg.content)}
-                      className="p-1 text-blue-500 hover:text-blue-700"
-                      title="Edit"
-                    >
-                      <Pencil className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(msg.id)}
-                      className={`p-1 transition-colors ${
-                        pendingDeleteId === msg.id
-                          ? 'text-red-600 bg-red-50 rounded'
-                          : 'text-gray-400 hover:text-red-500'
-                      }`}
-                      title={pendingDeleteId === msg.id ? 'Click again to confirm' : 'Delete'}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
       )}
-
-      {/* Actions */}
-      <div className="flex gap-2 mb-4">
-        <button
-          onClick={clearMessages}
-          className="flex-1 px-4 py-2 bg-red-100 text-red-700 rounded-md hover:bg-red-200 transition-colors flex items-center justify-center gap-2"
-        >
-          <Trash2 className="w-4 h-4" />
-          Clear All
-        </button>
-      </div>
-
-      {/* Premium Promo */}
-      {!isPremium && (
-        <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white p-4 rounded-lg">
-          <div className="flex items-center gap-2 mb-2">
-            <Crown className="w-5 h-5" />
-            <h3 className="font-bold">Premium Version</h3>
-          </div>
-          <p className="text-sm mb-2">Remove watermark + All platforms + Unlimited messages + MP4 export</p>
-          <p className="font-bold">$2.99/week or $9.99 lifetime</p>
-        </div>
-      )}
-
-      {/* Message Count */}
-      <div className="mt-4 text-sm text-gray-500 text-center">
-        {messages.length} / {isPremium ? '∞' : '20'} messages
-        {!isPremium && messages.length >= 20 && (
-          <p className="text-red-500 mt-1">Message limit reached. Upgrade to Premium!</p>
-        )}
-      </div>
     </div>
   );
 };
