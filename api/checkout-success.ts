@@ -11,11 +11,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const stripeKey = process.env.stripesecretkey;
-  const jwtSecret = process.env.jwtsecret;
+  const stripeKey = process.env.stripesecretkey || process.env.STRIPE_SECRET_KEY;
+  const jwtSecret = process.env.jwtsecret || process.env.JWT_SECRET;
 
   if (!stripeKey || !jwtSecret) {
-    return res.status(503).json({ error: 'Server not configured (missing stripesecretkey or jwtsecret)' });
+    return res.status(503).json({ error: 'Server not configured — set STRIPE_SECRET_KEY and JWT_SECRET in Vercel env vars' });
   }
 
   const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });

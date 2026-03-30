@@ -10,16 +10,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const stripeKey = process.env.stripesecretkey;
+  const stripeKey = process.env.stripesecretkey || process.env.STRIPE_SECRET_KEY;
   if (!stripeKey) {
-    return res.status(503).json({ error: 'Stripe not configured (missing stripesecretkey)' });
+    return res.status(503).json({ error: 'Stripe not configured — set STRIPE_SECRET_KEY or stripesecretkey in Vercel env vars' });
   }
 
   const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });
 
   const PRICE_IDS: Record<string, string | undefined> = {
-    weekly: process.env.stripeweekley,
-    lifetime: process.env.stripelifetime,
+    weekly: process.env.stripeweekley || process.env.STRIPE_WEEKLY_PRICE_ID,
+    lifetime: process.env.stripelifetime || process.env.STRIPE_LIFETIME_PRICE_ID,
   };
 
   const { priceId } = req.body as { priceId: 'weekly' | 'lifetime' };

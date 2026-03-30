@@ -18,9 +18,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const stripeKey = process.env.stripesecretkey;
-  const webhookSecret = process.env.stripewebhook;
-  const jwtSecret = process.env.jwtsecret;
+  const stripeKey = process.env.stripesecretkey || process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.stripewebhook || process.env.STRIPE_WEBHOOK_SECRET;
+  const jwtSecret = process.env.jwtsecret || process.env.JWT_SECRET;
 
   if (!stripeKey || !webhookSecret || !jwtSecret) {
     return res.status(503).json({ error: 'Server not configured' });
