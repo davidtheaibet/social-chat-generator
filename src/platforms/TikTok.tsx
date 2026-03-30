@@ -49,8 +49,8 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
     <div
       ref={containerRef}
       style={{
-        width: '280px',
-        height: '580px',
+        width: '320px',
+        height: '650px',
         background: '#121212',
         position: 'relative',
         overflow: 'hidden',
@@ -96,15 +96,15 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
           </div>
         )}
         <div style={{ flex: 1 }}>
-          <div style={{ fontWeight: 600, fontSize: '14px', color: 'white', lineHeight: 1.2 }}>
+          <div style={{ fontWeight: 600, fontSize: '15px', color: 'white', lineHeight: 1.2 }}>
             {contact.name}
           </div>
-          <div style={{ fontSize: '11px', color: '#888', lineHeight: 1 }}>
+          <div style={{ fontSize: '12px', color: '#888', lineHeight: 1 }}>
             {contact.status || 'TikTok'}
           </div>
         </div>
         {/* TikTok call icon */}
-        <svg width="18" height="18" fill="white" opacity={0.8} viewBox="0 0 24 24">
+        <svg width="22" height="22" fill="white" opacity={0.8} viewBox="0 0 24 24">
           <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" />
         </svg>
       </div>
@@ -117,7 +117,6 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '6px',
           background: '#121212',
         }}
       >
@@ -126,7 +125,11 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
             <p style={{ fontSize: '13px', color: '#555' }}>No messages yet</p>
           </div>
         ) : (
-          messages.map((message) => (
+          messages.map((message, index) => {
+            const prevMsg = index > 0 ? messages[index - 1] : null;
+            const sameSenderAsPrev = prevMsg?.sender === message.sender;
+            const marginTop = index === 0 ? '0' : (sameSenderAsPrev ? '2px' : '8px');
+            return (
             <div
               key={message.id}
               style={{
@@ -134,6 +137,7 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
                 justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
                 alignItems: 'flex-end',
                 gap: '6px',
+                marginTop,
               }}
             >
               {message.sender === 'contact' && (
@@ -159,12 +163,13 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
                 ) : (
                   <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
                 )}
-                <p style={{ fontSize: '10px', color: 'rgba(255,255,255,0.5)', margin: '2px 0 0', textAlign: 'right' }}>
+                <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: '2px 0 0', textAlign: 'right' }}>
                   {formatTime(message.timestamp)}
                 </p>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 

@@ -116,7 +116,7 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
       {/* Main editor card */}
       <div style={cardStyle}>
         {/* Platform selector */}
@@ -153,7 +153,7 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
         </div>
 
         {/* Contact name */}
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <span className="section-label">CONTACT NAME</span>
           <input
             className="input-field"
@@ -165,7 +165,7 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
         </div>
 
         {/* Contact photo */}
-        <div style={{ marginBottom: '16px' }}>
+        <div style={{ marginBottom: '20px' }}>
           <DragDropPhoto
             currentPhoto={contact.photo}
             onPhotoChange={(photo) => setContact({ photo })}

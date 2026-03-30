@@ -135,7 +135,31 @@ export const VideoExport: React.FC<VideoExportProps> = ({ previewRef, onUpgradeC
     return (
       <button
         onClick={onUpgradeClick}
-        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded-full font-semibold text-sm hover:shadow-lg transition-shadow"
+        style={{
+          height: '44px',
+          width: '100%',
+          borderRadius: '10px',
+          border: '1.5px solid #6366F1',
+          background: 'white',
+          color: '#6366F1',
+          fontSize: '14px',
+          fontWeight: 600,
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '8px',
+          fontFamily: 'inherit',
+          transition: 'opacity 0.15s, transform 0.15s',
+        }}
+        onMouseEnter={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.opacity = '0.9';
+          (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.01)';
+        }}
+        onMouseLeave={(e) => {
+          (e.currentTarget as HTMLButtonElement).style.opacity = '1';
+          (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+        }}
       >
         <Crown className="w-4 h-4" />
         Export MP4 (Premium)
@@ -147,7 +171,34 @@ export const VideoExport: React.FC<VideoExportProps> = ({ previewRef, onUpgradeC
     <button
       onClick={exportVideo}
       disabled={exporting || messages.length === 0}
-      className="flex items-center gap-2 px-4 py-2 bg-purple-600 text-white rounded-full font-semibold text-sm hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      style={{
+        height: '44px',
+        width: '100%',
+        borderRadius: '10px',
+        border: '1.5px solid #6366F1',
+        background: 'white',
+        color: '#6366F1',
+        fontSize: '14px',
+        fontWeight: 600,
+        cursor: (exporting || messages.length === 0) ? 'not-allowed' : 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '8px',
+        fontFamily: 'inherit',
+        opacity: (exporting || messages.length === 0) ? 0.5 : 1,
+        transition: 'opacity 0.15s, transform 0.15s',
+      }}
+      onMouseEnter={(e) => {
+        if (!exporting && messages.length > 0) {
+          (e.currentTarget as HTMLButtonElement).style.opacity = '0.9';
+          (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.01)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        (e.currentTarget as HTMLButtonElement).style.opacity = (exporting || messages.length === 0) ? '0.5' : '1';
+        (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+      }}
     >
       {exporting ? (
         <>

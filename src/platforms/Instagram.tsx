@@ -46,8 +46,8 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
     <div
       ref={containerRef}
       style={{
-        width: '280px',
-        height: '580px',
+        width: '320px',
+        height: '650px',
         background: 'white',
         position: 'relative',
         overflow: 'hidden',
@@ -121,18 +121,17 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
             />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '13px', color: '#262626', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: '15px', color: '#262626', lineHeight: 1.2 }}>
               {contact.name}
             </div>
-            <div style={{ fontSize: '11px', color: '#8E8E8E', lineHeight: 1 }}>
+            <div style={{ fontSize: '12px', color: '#65676B', lineHeight: 1 }}>
               {contact.status || 'Active now'}
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
           <PhoneIcon />
           <VideoIcon />
-          <InfoIcon />
         </div>
       </div>
 
@@ -144,7 +143,6 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '6px',
           background: 'white',
         }}
       >
@@ -172,90 +170,159 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
             <p style={{ fontSize: '12px', color: '#8E8E8E' }}>Instagram</p>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              style={{
-                display: 'flex',
-                justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
-                alignItems: 'flex-end',
-                gap: '6px',
-              }}
-            >
-              {message.sender === 'contact' && (
-                contact.photo ? (
-                  <img src={contact.photo} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                ) : (
-                  <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', flexShrink: 0 }}>
-                    {contact.name.charAt(0)}
-                  </div>
-                )
-              )}
+          messages.map((message, index) => {
+            const prevMsg = index > 0 ? messages[index - 1] : null;
+            const sameSenderAsPrev = prevMsg?.sender === message.sender;
+            const marginTop = sameSenderAsPrev ? '2px' : (index === 0 ? '0' : '8px');
+            return (
               <div
+                key={message.id}
                 style={{
-                  maxWidth: '70%',
-                  padding: '8px 12px',
-                  borderRadius: '22px',
-                  background: message.sender === 'me' ? '#C13584' : '#EFEFEF',
-                  color: message.sender === 'me' ? 'white' : '#262626',
+                  display: 'flex',
+                  justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
+                  alignItems: 'flex-end',
+                  gap: '6px',
+                  marginTop,
                 }}
               >
-                {message.type === 'image' ? (
-                  <img src={message.content} alt="" style={{ borderRadius: '8px', maxWidth: '100%' }} />
-                ) : (
-                  <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
+                {message.sender === 'contact' && (
+                  !sameSenderAsPrev ? (
+                    contact.photo ? (
+                      <img src={contact.photo} alt="" style={{ width: 24, height: 24, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                    ) : (
+                      <div style={{ width: 24, height: 24, borderRadius: '50%', background: '#E5E7EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '10px', flexShrink: 0 }}>
+                        {contact.name.charAt(0)}
+                      </div>
+                    )
+                  ) : (
+                    <div style={{ width: 24, flexShrink: 0 }} />
+                  )
                 )}
+                <div
+                  style={{
+                    maxWidth: '70%',
+                    padding: '8px 12px',
+                    borderRadius: '22px',
+                    background: message.sender === 'me' ? '#C13584' : '#EFEFEF',
+                    color: message.sender === 'me' ? 'white' : '#262626',
+                  }}
+                >
+                  {message.type === 'image' ? (
+                    <img src={message.content} alt="" style={{ borderRadius: '8px', maxWidth: '100%' }} />
+                  ) : (
+                    <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.35 }}>{message.content}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 
-      {/* Input area */}
+      {/* Input area — real Instagram DM composer */}
       <div
         style={{
           padding: '8px 10px',
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          borderTop: '1px solid #F3F4F6',
+          borderTop: '1px solid #DBDBDB',
+          background: 'white',
         }}
       >
-        <span style={{ fontSize: '22px' }}>😊</span>
+        {/* Plus button */}
+        <button
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '50%',
+            border: 'none',
+            background: 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            flexShrink: 0,
+            padding: 0,
+          }}
+        >
+          <PlusIcon />
+        </button>
+
+        {/* Pill text input */}
         <div
           style={{
             flex: 1,
-            background: '#FAFAFA',
+            height: '36px',
             borderRadius: '22px',
-            padding: '7px 14px',
-            border: '1px solid #E5E7EB',
+            border: '1.5px solid #DBDBDB',
+            background: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            padding: '0 14px',
           }}
         >
-          <span style={{ fontSize: '13px', color: '#8E8E8E' }}>Message...</span>
+          <span style={{ fontSize: '14px', color: '#8E8E8E' }}>Message...</span>
         </div>
-        <span style={{ color: '#3897F0', fontWeight: 600, fontSize: '13px' }}>Send</span>
+
+        {/* Right icons: camera, image, mic, heart */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
+          <CameraIcon />
+          <ImageIcon />
+          <MicIcon />
+          <HeartIcon />
+        </div>
       </div>
     </div>
   );
 };
 
 const PhoneIcon = () => (
-  <svg width="18" height="18" fill="none" stroke="#262626" strokeWidth="2" viewBox="0 0 24 24">
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="2" viewBox="0 0 24 24">
     <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.89 9.11a19.79 19.79 0 01-3.07-8.67A2 2 0 012.81 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L7.09 9.91a16 16 0 006 6l.94-.94a2 2 0 012.12-.45 12.84 12.84 0 002.81.7A2 2 0 0122 17.2z" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const VideoIcon = () => (
-  <svg width="18" height="18" fill="none" stroke="#262626" strokeWidth="2" viewBox="0 0 24 24">
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="2" viewBox="0 0 24 24">
     <polygon points="23 7 16 12 23 17 23 7" />
     <rect x="1" y="5" width="15" height="14" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
-const InfoIcon = () => (
-  <svg width="18" height="18" fill="none" stroke="#262626" strokeWidth="2" viewBox="0 0 24 24">
-    <circle cx="12" cy="12" r="10" />
-    <line x1="12" y1="8" x2="12" y2="12" strokeLinecap="round" />
-    <line x1="12" y1="16" x2="12.01" y2="16" strokeLinecap="round" />
+const PlusIcon = () => (
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="2" viewBox="0 0 24 24">
+    <line x1="12" y1="5" x2="12" y2="19" strokeLinecap="round" />
+    <line x1="5" y1="12" x2="19" y2="12" strokeLinecap="round" />
+  </svg>
+);
+
+const CameraIcon = () => (
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="1.8" viewBox="0 0 24 24">
+    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="12" cy="13" r="4" />
+  </svg>
+);
+
+const ImageIcon = () => (
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="1.8" viewBox="0 0 24 24">
+    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" strokeLinecap="round" strokeLinejoin="round" />
+    <circle cx="8.5" cy="8.5" r="1.5" />
+    <polyline points="21 15 16 10 5 21" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+const MicIcon = () => (
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="1.8" viewBox="0 0 24 24">
+    <path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z" strokeLinecap="round" strokeLinejoin="round" />
+    <path d="M19 10v2a7 7 0 01-14 0v-2" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="12" y1="19" x2="12" y2="23" strokeLinecap="round" />
+    <line x1="8" y1="23" x2="16" y2="23" strokeLinecap="round" />
+  </svg>
+);
+
+const HeartIcon = () => (
+  <svg width="22" height="22" fill="none" stroke="#262626" strokeWidth="1.8" viewBox="0 0 24 24">
+    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );

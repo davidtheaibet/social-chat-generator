@@ -128,10 +128,11 @@ function App() {
         style={{
           border: '8px solid #1C1C1E',
           borderRadius: '44px',
-          boxShadow: '0 30px 70px rgba(0,0,0,0.28), 0 0 0 1px rgba(255,255,255,0.06)',
+          boxShadow: '0 24px 60px rgba(0,0,0,0.25), 0 8px 20px rgba(0,0,0,0.15)',
           overflow: 'hidden',
           background: '#000',
           display: 'inline-block',
+          outline: '1px solid rgba(255,255,255,0.06)',
         }}
       >
         {currentPlatform === 'whatsapp' && <WhatsAppPreview containerRef={previewRef} />}
@@ -141,23 +142,48 @@ function App() {
         {currentPlatform === 'tiktok' && <TikTokPreview containerRef={previewRef} />}
       </div>
 
-      {/* Screenshot button */}
-      <button
-        onClick={handleExport}
-        disabled={messages.length === 0}
-        className="flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm text-white transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          background: messages.length === 0 ? '#9CA3AF' : 'linear-gradient(135deg, #6366F1, #8B5CF6)',
-          boxShadow: messages.length > 0 ? '0 4px 14px rgba(99,102,241,0.4)' : 'none',
-        }}
-      >
-        <Camera className="w-4 h-4" />
-        Screenshot
-      </button>
+      {/* Action buttons */}
+      <div style={{ width: '100%', maxWidth: '320px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        {/* Screenshot button */}
+        <button
+          onClick={handleExport}
+          disabled={messages.length === 0}
+          style={{
+            height: '44px',
+            width: '100%',
+            borderRadius: '10px',
+            border: 'none',
+            background: messages.length === 0 ? '#9CA3AF' : '#6366F1',
+            color: 'white',
+            fontSize: '14px',
+            fontWeight: 600,
+            cursor: messages.length === 0 ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            fontFamily: 'inherit',
+            opacity: messages.length === 0 ? 0.4 : 1,
+            transition: 'opacity 0.15s, transform 0.15s',
+          }}
+          onMouseEnter={(e) => {
+            if (messages.length > 0) {
+              (e.currentTarget as HTMLButtonElement).style.opacity = '0.9';
+              (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.01)';
+            }
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.opacity = messages.length === 0 ? '0.4' : '1';
+            (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+          }}
+        >
+          <Camera className="w-4 h-4" />
+          Screenshot
+        </button>
 
-      {/* Video export */}
-      <div className="flex flex-col items-center gap-2">
+        {/* Video export */}
         <VideoExport previewRef={previewRef} onUpgradeClick={() => setShowUpgrade(true)} />
+
         <p className="text-xs text-center" style={{ color: '#9CA3AF' }}>
           {isPremium
             ? 'Premium: No watermark · MP4 export · Unlimited messages'

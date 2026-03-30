@@ -49,8 +49,8 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
     <div
       ref={containerRef}
       style={{
-        width: '280px',
-        height: '580px',
+        width: '320px',
+        height: '650px',
         background: '#FFFC00',
         position: 'relative',
         overflow: 'hidden',
@@ -97,10 +97,10 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
             </div>
           )}
           <div>
-            <div style={{ fontWeight: 700, fontSize: '14px', color: '#000', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: '15px', color: '#000', lineHeight: 1.2 }}>
               {contact.name}
             </div>
-            <div style={{ fontSize: '11px', color: 'rgba(0,0,0,0.5)', lineHeight: 1 }}>
+            <div style={{ fontSize: '12px', color: 'rgba(0,0,0,0.5)', lineHeight: 1 }}>
               🔥 12 · {contact.status || 'Snapchat'}
             </div>
           </div>
@@ -118,7 +118,6 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
           padding: '10px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '6px',
           background: 'white',
         }}
       >
@@ -127,7 +126,11 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
             <p style={{ fontSize: '13px', color: '#8E8E8E' }}>No messages yet</p>
           </div>
         ) : (
-          messages.map((message) => (
+          messages.map((message, index) => {
+            const prevMsg = index > 0 ? messages[index - 1] : null;
+            const sameSenderAsPrev = prevMsg?.sender === message.sender;
+            const marginTop = index === 0 ? '0' : (sameSenderAsPrev ? '2px' : '8px');
+            return (
             <div
               key={message.id}
               style={{
@@ -135,6 +138,7 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
                 justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
                 alignItems: 'flex-end',
                 gap: '6px',
+                marginTop,
               }}
             >
               {message.sender === 'contact' && (
@@ -161,13 +165,14 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
                 ) : (
                   <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
                 )}
-                <p style={{ fontSize: '10px', color: 'rgba(0,0,0,0.4)', margin: '2px 0 0', textAlign: 'right' }}>
+                <p style={{ fontSize: '11px', color: 'rgba(0,0,0,0.4)', margin: '2px 0 0', textAlign: 'right' }}>
                   {formatTime(message.timestamp)}
                   {message.sender === 'me' && ' ✓'}
                 </p>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
 

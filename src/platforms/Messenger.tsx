@@ -46,8 +46,8 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
     <div
       ref={containerRef}
       style={{
-        width: '280px',
-        height: '580px',
+        width: '320px',
+        height: '650px',
         background: 'white',
         position: 'relative',
         overflow: 'hidden',
@@ -93,19 +93,19 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
             </div>
           )}
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px', color: '#050505', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: '15px', color: '#050505', lineHeight: 1.2 }}>
               {contact.name}
             </div>
-            <div style={{ fontSize: '11px', color: '#65676B', lineHeight: 1 }}>
+            <div style={{ fontSize: '12px', color: '#65676B', lineHeight: 1 }}>
               {contact.status || 'Active now'}
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '14px' }}>
-          <svg width="18" height="18" fill="#0084FF" viewBox="0 0 24 24">
+        <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
+          <svg width="22" height="22" fill="#0084FF" viewBox="0 0 24 24">
             <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" />
           </svg>
-          <svg width="18" height="18" fill="#0084FF" viewBox="0 0 24 24">
+          <svg width="22" height="22" fill="#0084FF" viewBox="0 0 24 24">
             <path d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z" />
           </svg>
         </div>
@@ -119,7 +119,6 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '4px',
         }}
       >
         {messages.length === 0 ? (
@@ -127,43 +126,53 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
             <p style={{ fontSize: '13px', color: '#65676B' }}>No messages yet</p>
           </div>
         ) : (
-          messages.map((message) => (
-            <div
-              key={message.id}
-              style={{
-                display: 'flex',
-                justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
-                alignItems: 'flex-end',
-                gap: '6px',
-              }}
-            >
-              {message.sender === 'contact' && (
-                contact.photo ? (
-                  <img src={contact.photo} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-                ) : (
-                  <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#E4E6EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', flexShrink: 0 }}>
-                    {contact.name.charAt(0)}
-                  </div>
-                )
-              )}
+          messages.map((message, index) => {
+            const prevMsg = index > 0 ? messages[index - 1] : null;
+            const sameSenderAsPrev = prevMsg?.sender === message.sender;
+            const marginTop = index === 0 ? '0' : (sameSenderAsPrev ? '2px' : '8px');
+            return (
               <div
+                key={message.id}
                 style={{
-                  maxWidth: '70%',
-                  padding: '8px 12px',
-                  borderRadius: message.sender === 'me' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
-                  background: message.sender === 'me' ? '#0084FF' : '#F0F0F0',
-                  color: message.sender === 'me' ? 'white' : '#050505',
-                  boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+                  display: 'flex',
+                  justifyContent: message.sender === 'me' ? 'flex-end' : 'flex-start',
+                  alignItems: 'flex-end',
+                  gap: '6px',
+                  marginTop,
                 }}
               >
-                {message.type === 'image' ? (
-                  <img src={message.content} alt="" style={{ borderRadius: '8px', maxWidth: '100%' }} />
-                ) : (
-                  <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
+                {message.sender === 'contact' && (
+                  !sameSenderAsPrev ? (
+                    contact.photo ? (
+                      <img src={contact.photo} alt="" style={{ width: 22, height: 22, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
+                    ) : (
+                      <div style={{ width: 22, height: 22, borderRadius: '50%', background: '#E4E6EB', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '9px', flexShrink: 0 }}>
+                        {contact.name.charAt(0)}
+                      </div>
+                    )
+                  ) : (
+                    <div style={{ width: 22, flexShrink: 0 }} />
+                  )
                 )}
+                <div
+                  style={{
+                    maxWidth: '70%',
+                    padding: '8px 12px',
+                    borderRadius: message.sender === 'me' ? '18px 18px 4px 18px' : '18px 18px 18px 4px',
+                    background: message.sender === 'me' ? '#0084FF' : '#F0F0F0',
+                    color: message.sender === 'me' ? 'white' : '#050505',
+                    boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
+                  }}
+                >
+                  {message.type === 'image' ? (
+                    <img src={message.content} alt="" style={{ borderRadius: '8px', maxWidth: '100%' }} />
+                  ) : (
+                    <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
 

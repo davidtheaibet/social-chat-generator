@@ -1,5 +1,5 @@
 import { useAppStore, type Message } from '../stores/appStore';
-import { Check, CheckCheck, Mic, Camera } from 'lucide-react';
+import { Check, CheckCheck, Mic } from 'lucide-react';
 
 interface WhatsAppPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -50,8 +50,8 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
     <div
       ref={containerRef}
       style={{
-        width: '280px',
-        height: '580px',
+        width: '320px',
+        height: '650px',
         background: '#ECE5DD',
         position: 'relative',
         overflow: 'hidden',
@@ -110,16 +110,15 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
             </div>
           )}
           <div>
-            <div style={{ fontWeight: 600, fontSize: '14px', lineHeight: 1.2 }}>{contact.name}</div>
-            <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.75)', lineHeight: 1 }}>
+            <div style={{ fontWeight: 600, fontSize: '15px', lineHeight: 1.2 }}>{contact.name}</div>
+            <div style={{ fontSize: '12px', color: 'rgba(255,255,255,0.75)', lineHeight: 1 }}>
               {contact.status || 'online'}
             </div>
           </div>
         </div>
-        <div style={{ display: 'flex', gap: '14px', alignItems: 'center' }}>
-          <Camera style={{ width: 18, height: 18, opacity: 0.9 }} />
+        <div style={{ display: 'flex', gap: '18px', alignItems: 'center' }}>
+          <VideoHeaderIcon />
           <PhoneIcon />
-          <DotsIcon />
         </div>
       </div>
 
@@ -131,7 +130,6 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
           padding: '10px 10px',
           display: 'flex',
           flexDirection: 'column',
-          gap: '4px',
         }}
       >
         {messages.length === 0 ? (
@@ -140,8 +138,13 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
             <p style={{ fontSize: '11px', color: '#9CA3AF' }}>Add messages using the editor</p>
           </div>
         ) : (
-          messages.map((message: Message) => (
-            <WhatsAppBubble key={message.id} message={message} />
+          messages.map((message: Message, index: number) => (
+            <WhatsAppBubble
+              key={message.id}
+              message={message}
+              sameSenderAsPrev={index > 0 && messages[index - 1].sender === message.sender}
+              isFirst={index === 0}
+            />
           ))
         )}
       </div>
@@ -188,11 +191,12 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
   );
 };
 
-const WhatsAppBubble: React.FC<{ message: Message }> = ({ message }) => {
+const WhatsAppBubble: React.FC<{ message: Message; sameSenderAsPrev: boolean; isFirst: boolean }> = ({ message, sameSenderAsPrev, isFirst }) => {
   const formatTime = (date: Date) =>
     date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
 
   const isMe = message.sender === 'me';
+  const marginTop = isFirst ? '0' : (sameSenderAsPrev ? '2px' : '8px');
 
   const getStatusIcon = (status?: string) => {
     switch (status) {
@@ -207,6 +211,7 @@ const WhatsAppBubble: React.FC<{ message: Message }> = ({ message }) => {
       style={{
         display: 'flex',
         justifyContent: isMe ? 'flex-end' : 'flex-start',
+        marginTop,
       }}
     >
       <div
@@ -219,36 +224,38 @@ const WhatsAppBubble: React.FC<{ message: Message }> = ({ message }) => {
           position: 'relative',
         }}
       >
-        {/* Bubble tail */}
-        {isMe ? (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: -7,
-              width: 0,
-              height: 0,
-              borderLeft: '7px solid #DCF8C6',
-              borderBottom: '7px solid transparent',
-            }}
-          />
-        ) : (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: -7,
-              width: 0,
-              height: 0,
-              borderRight: '7px solid white',
-              borderBottom: '7px solid transparent',
-            }}
-          />
+        {/* Bubble tail — only on first in a group */}
+        {!sameSenderAsPrev && (
+          isMe ? (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: -7,
+                width: 0,
+                height: 0,
+                borderLeft: '7px solid #DCF8C6',
+                borderBottom: '7px solid transparent',
+              }}
+            />
+          ) : (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: -7,
+                width: 0,
+                height: 0,
+                borderRight: '7px solid white',
+                borderBottom: '7px solid transparent',
+              }}
+            />
+          )
         )}
         {message.type === 'image' ? (
           <img src={message.content} alt="" style={{ borderRadius: '4px', maxWidth: '100%' }} />
         ) : (
-          <p style={{ fontSize: '14px', color: '#111', margin: 0, lineHeight: 1.4 }}>
+          <p style={{ fontSize: '14.2px', color: '#111', margin: 0, lineHeight: 1.42 }}>
             {message.content}
           </p>
         )}
@@ -261,16 +268,14 @@ const WhatsAppBubble: React.FC<{ message: Message }> = ({ message }) => {
   );
 };
 
-const PhoneIcon = () => (
-  <svg width="18" height="18" fill="white" opacity={0.9} viewBox="0 0 24 24">
-    <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" />
+const VideoHeaderIcon = () => (
+  <svg width="22" height="22" fill="white" opacity={0.9} viewBox="0 0 24 24">
+    <path d="M17 10.5V7a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h12a1 1 0 001-1v-3.5l4 4v-11l-4 4z" />
   </svg>
 );
 
-const DotsIcon = () => (
-  <svg width="18" height="18" fill="white" opacity={0.9} viewBox="0 0 24 24">
-    <circle cx="12" cy="5" r="2" />
-    <circle cx="12" cy="12" r="2" />
-    <circle cx="12" cy="19" r="2" />
+const PhoneIcon = () => (
+  <svg width="22" height="22" fill="white" opacity={0.9} viewBox="0 0 24 24">
+    <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z" />
   </svg>
 );
