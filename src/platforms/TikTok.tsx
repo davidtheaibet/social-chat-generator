@@ -50,7 +50,7 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
           </div>
         ) : (
           messages.map((message) => (
-            <div key={message.id} className="flex gap-3">
+            <div data-msg-bubble key={message.id} className="flex gap-3">
               {contact.photo ? (
                 <img src={contact.photo} alt="" className="w-10 h-10 rounded-full object-cover flex-shrink-0" />
               ) : (

@@ -109,7 +109,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isMe = message.sender === 'me';
   
   return (
-    <div className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
+    <div data-msg-bubble className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
       <div 
         className={`max-w-[75%] px-3 py-2 rounded-lg relative ${
           isMe 

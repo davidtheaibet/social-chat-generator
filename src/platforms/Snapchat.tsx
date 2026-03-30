@@ -61,6 +61,7 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
         ) : (
           messages.map((message) => (
             <div 
+              data-msg-bubble
               key={message.id}
               className={`flex ${message.sender === 'me' ? 'justify-end' : 'justify-start'}`}
             >
