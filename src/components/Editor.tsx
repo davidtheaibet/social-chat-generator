@@ -136,7 +136,7 @@ export const Editor: React.FC = () => {
               onChange={() => setSender('me')}
               className="w-4 h-4 text-blue-600"
             />
-            <span className="text-sm">Sent</span>
+            <span className="text-sm font-medium">To (You send)</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -146,7 +146,7 @@ export const Editor: React.FC = () => {
               onChange={() => setSender('contact')}
               className="w-4 h-4 text-blue-600"
             />
-            <span className="text-sm">Received</span>
+            <span className="text-sm font-medium">From (They send)</span>
           </label>
         </div>
         

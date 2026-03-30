@@ -21,9 +21,16 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
         <div className="flex items-center gap-3">
           <button className="text-white">←</button>
           {contact.photo ? (
-            <img src={contact.photo} alt="" className="w-10 h-10 rounded-full object-cover" />
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-300 flex-shrink-0">
+              <img 
+                src={contact.photo} 
+                alt="" 
+                className="w-full h-full object-cover"
+                style={{ objectPosition: 'center' }}
+              />
+            </div>
           ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold">
+            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-gray-600 font-semibold flex-shrink-0">
               {contact.name.charAt(0).toUpperCase()}
             </div>
           )}
