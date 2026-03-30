@@ -24,7 +24,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET!) as PremiumPayload;
+    const payload = jwt.verify(token, process.env.jwtsecret!) as PremiumPayload;
 
     return res.status(200).json({
       isPremium: payload.isPremium,

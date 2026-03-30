@@ -18,9 +18,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  const jwtSecret = process.env.JWT_SECRET;
+  const stripeKey = process.env.stripesecretkey;
+  const webhookSecret = process.env.stripewebhook;
+  const jwtSecret = process.env.jwtsecret;
 
   if (!stripeKey || !webhookSecret || !jwtSecret) {
     return res.status(503).json({ error: 'Server not configured' });
@@ -47,7 +47,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const token = jwt.sign(
       { isPremium: true, tier, sessionId: session.id },
       jwtSecret,
-      expiresIn ? { expiresIn } : {}
+      expiresIn ? { expiresIn } : {}  // eslint-disable-line @typescript-eslint/no-explicit-any
     );
 
     console.log(`Premium activated: tier=${tier}, session=${session.id}, token=${token}`);

@@ -10,16 +10,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const stripeKey = process.env.stripesecretkey;
   if (!stripeKey) {
-    return res.status(503).json({ error: 'Stripe not configured (missing STRIPE_SECRET_KEY)' });
+    return res.status(503).json({ error: 'Stripe not configured (missing stripesecretkey)' });
   }
 
   const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });
 
   const PRICE_IDS: Record<string, string | undefined> = {
-    weekly: process.env.STRIPE_WEEKLY_PRICE_ID,
-    lifetime: process.env.STRIPE_LIFETIME_PRICE_ID,
+    weekly: process.env.stripeweekley,
+    lifetime: process.env.stripelifetime,
   };
 
   const { priceId } = req.body as { priceId: 'weekly' | 'lifetime' };
@@ -28,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: 'Invalid priceId. Must be "weekly" or "lifetime".' });
   }
 
-  const appUrl = process.env.VITE_APP_URL || `https://${req.headers.host}`;
+  const appUrl = process.env.VITE_APP_URL || `https://social-chat-generator.vercel.app`;
 
   try {
     const session = await stripe.checkout.sessions.create({
