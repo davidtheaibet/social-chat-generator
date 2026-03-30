@@ -2,10 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
 import jwt from 'jsonwebtoken';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
-
 export const config = { api: { bodyParser: false } };
 
 async function getRawBody(req: VercelRequest): Promise<Buffer> {
@@ -22,12 +18,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const jwtSecret = process.env.JWT_SECRET;
+
+  if (!stripeKey || !webhookSecret || !jwtSecret) {
+    return res.status(503).json({ error: 'Server not configured' });
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });
+
   const sig = req.headers['stripe-signature'] as string;
   const rawBody = await getRawBody(req);
 
   let event: Stripe.Event;
   try {
-    event = stripe.webhooks.constructEvent(rawBody, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error';
     return res.status(400).json({ error: `Webhook signature verification failed: ${message}` });
@@ -40,13 +46,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const token = jwt.sign(
       { isPremium: true, tier, sessionId: session.id },
-      process.env.JWT_SECRET!,
+      jwtSecret,
       expiresIn ? { expiresIn } : {}
     );
 
-    // In a production app you would store this token against a user ID.
-    // For this architecture we return it in the response so the frontend
-    // can store it in localStorage and pass it to /api/verify-premium.
     console.log(`Premium activated: tier=${tier}, session=${session.id}, token=${token}`);
   }
 

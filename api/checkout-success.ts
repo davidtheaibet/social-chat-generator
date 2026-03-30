@@ -2,10 +2,6 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import Stripe from 'stripe';
 import jwt from 'jsonwebtoken';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-12-18.acacia',
-});
-
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
@@ -14,6 +10,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
+
+  const stripeKey = process.env.STRIPE_SECRET_KEY;
+  const jwtSecret = process.env.JWT_SECRET;
+
+  if (!stripeKey || !jwtSecret) {
+    return res.status(503).json({ error: 'Server not configured (missing STRIPE_SECRET_KEY or JWT_SECRET)' });
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });
 
   const sessionId = req.query.session_id as string | undefined;
 
@@ -33,7 +38,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
     const token = jwt.sign(
       { isPremium: true, tier, sessionId: session.id },
-      process.env.JWT_SECRET!,
+      jwtSecret,
       expiresIn ? { expiresIn } : {}
     );
 
