@@ -1,5 +1,5 @@
 import { useAppStore, type Message } from '../stores/appStore';
-import { Check, CheckCheck, Mic } from 'lucide-react';
+import { Check, CheckCheck, Mic, Camera, Smile, Paperclip } from 'lucide-react';
 
 interface WhatsAppPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -152,39 +152,44 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
       {/* Input area */}
       <div
         style={{
-          background: '#f0f0f0',
-          padding: '6px 8px',
+          background: '#F0F2F5',
+          padding: '8px 12px',
           display: 'flex',
           alignItems: 'center',
-          gap: '6px',
+          gap: '8px',
+          borderTop: '1px solid rgba(0,0,0,0.06)',
         }}
       >
+        <Paperclip style={{ width: 22, height: 22, color: '#54656F', flexShrink: 0 }} />
         <div
           style={{
             flex: 1,
             background: 'white',
-            borderRadius: '20px',
-            padding: '6px 12px',
+            borderRadius: '21px',
+            height: '42px',
+            padding: '0 12px 0 16px',
             display: 'flex',
             alignItems: 'center',
-            gap: '8px',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
           }}
         >
-          <span style={{ fontSize: '18px', lineHeight: 1 }}>😊</span>
-          <span style={{ fontSize: '13px', color: '#667781' }}>Type a message</span>
+          <Smile style={{ width: 20, height: 20, color: '#54656F', flexShrink: 0, marginRight: '8px' }} />
+          <span style={{ flex: 1, fontSize: '15px', color: '#8696A0' }}>Message</span>
+          <Camera style={{ width: 20, height: 20, color: '#54656F', flexShrink: 0, marginLeft: '8px' }} />
         </div>
         <div
           style={{
-            width: '38px',
-            height: '38px',
-            background: '#075e54',
+            width: '42px',
+            height: '42px',
+            background: '#00A884',
             borderRadius: '50%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            flexShrink: 0,
           }}
         >
-          <Mic style={{ width: 18, height: 18, color: 'white' }} />
+          <Mic style={{ width: 20, height: 20, color: 'white' }} />
         </div>
       </div>
     </div>
