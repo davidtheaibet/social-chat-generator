@@ -19,7 +19,7 @@ body {
   background-color: #F8F9FC;
 }
 
-/* Custom scrollbar */
+/* Refined scrollbar */
 ::-webkit-scrollbar {
   width: 5px;
 }

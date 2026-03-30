@@ -31,6 +31,7 @@ function App() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+
     const token = params.get('premium_token');
     if (token) {
       verifyPremiumToken(token);
@@ -72,14 +73,14 @@ function App() {
         const ctx = canvas.getContext('2d');
         if (ctx) {
           ctx.save();
-          ctx.font = '14px -apple-system, BlinkMacSystemFont, sans-serif';
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+          ctx.font = '14px Inter, -apple-system, sans-serif';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
           ctx.textBaseline = 'bottom';
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
-          ctx.shadowBlur = 3;
-          const text = 'social-chat-generator.app';
-          const x = canvas.width - ctx.measureText(text).width - 12;
-          const y = canvas.height - 12;
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+          ctx.shadowBlur = 4;
+          const text = 'ChatFake.app';
+          const x = canvas.width - ctx.measureText(text).width - 16;
+          const y = canvas.height - 16;
           ctx.fillText(text, x, y);
           ctx.restore();
         }

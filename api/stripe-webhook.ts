@@ -1,0 +1,57 @@
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import Stripe from 'stripe';
+import jwt from 'jsonwebtoken';
+
+export const config = { api: { bodyParser: false } };
+
+async function getRawBody(req: VercelRequest): Promise<Buffer> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on('data', (chunk: Buffer) => chunks.push(chunk));
+    req.on('end', () => resolve(Buffer.concat(chunks)));
+    req.on('error', reject);
+  });
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const stripeKey = process.env.stripesecretkey || process.env.STRIPE_SECRET_KEY;
+  const webhookSecret = process.env.stripewebhook || process.env.STRIPE_WEBHOOK_SECRET;
+  const jwtSecret = process.env.jwtsecret || process.env.JWT_SECRET;
+
+  if (!stripeKey || !webhookSecret || !jwtSecret) {
+    return res.status(503).json({ error: 'Server not configured' });
+  }
+
+  const stripe = new Stripe(stripeKey, { apiVersion: '2024-12-18.acacia' });
+
+  const sig = req.headers['stripe-signature'] as string;
+  const rawBody = await getRawBody(req);
+
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : 'Unknown error';
+    return res.status(400).json({ error: `Webhook signature verification failed: ${message}` });
+  }
+
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object as Stripe.Checkout.Session;
+    const tier = (session.metadata?.tier ?? 'lifetime') as 'weekly' | 'lifetime';
+    const expiresIn = tier === 'weekly' ? '7d' : undefined;
+
+    const token = jwt.sign(
+      { isPremium: true, tier, sessionId: session.id },
+      jwtSecret,
+      expiresIn ? { expiresIn } : {}  // eslint-disable-line @typescript-eslint/no-explicit-any
+    );
+
+    console.log(`Premium activated: tier=${tier}, session=${session.id}, token=${token}`);
+  }
+
+  return res.status(200).json({ received: true });
+}

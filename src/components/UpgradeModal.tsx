@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Crown, X, Loader2 } from 'lucide-react';
+import { Crown, X, Loader2, Check, Zap, Infinity } from 'lucide-react';
 
 interface UpgradeModalProps {
   onClose: () => void;
@@ -25,7 +25,7 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
       if (data.url) {
         window.location.href = data.url;
       }
-    } catch (err) {
+    } catch {
       setError('Could not start checkout. Please try again.');
       setLoading(null);
     }
@@ -109,6 +109,8 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
             {loading === 'weekly' && <Loader2 className="w-4 h-4 animate-spin" />}
             $2.99 / week
           </button>
+
+          {/* Lifetime — featured */}
           <button
             onClick={() => handleUpgrade('lifetime')}
             disabled={loading !== null}
@@ -133,6 +135,10 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
             {loading === 'lifetime' && <Loader2 className="w-4 h-4 animate-spin" />}
             $9.99 lifetime — Best Value
           </button>
+
+          <p className="text-center text-xs text-gray-400 pt-1">
+            Secure checkout via Stripe · Instant access
+          </p>
         </div>
       </div>
     </div>
