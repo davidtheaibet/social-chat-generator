@@ -119,9 +119,9 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-end',
         }}
       >
+        <div style={{ flex: 1 }} />
         {messages.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '60px' }}>
             <p style={{ fontSize: '13px', color: '#65676B' }}>No messages yet</p>

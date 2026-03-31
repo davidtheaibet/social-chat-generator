@@ -130,9 +130,9 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
           padding: '10px 10px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-end',
         }}
       >
+        <div style={{ flex: 1 }} />
         {messages.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '60px' }}>
             <p style={{ fontSize: '13px', color: '#667781' }}>No messages yet</p>

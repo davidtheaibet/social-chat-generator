@@ -4,7 +4,7 @@ import { Trash2, Plus, Pencil, Check, X } from 'lucide-react';
 import { DragDropPhoto } from './DragDropPhoto';
 
 interface EditorProps {
-  onUpgradeClick: () => void;
+  onUpgradeClick?: () => void;
 }
 
 const PLATFORM_ICONS: Record<string, { color: string; activeBg: string; lightBg?: boolean; path: string }> = {
@@ -47,7 +47,7 @@ const PlatformIcon: React.FC<{ platform: string; active: boolean }> = ({ platfor
   );
 };
 
-export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
+export const Editor: React.FC<EditorProps> = ({ onUpgradeClick: _onUpgradeClick }) => {
   const {
     currentPlatform,
     setPlatform,

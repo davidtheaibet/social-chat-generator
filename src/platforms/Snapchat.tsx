@@ -119,10 +119,10 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
           padding: '10px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-end',
           background: 'white',
         }}
       >
+        <div style={{ flex: 1 }} />
         {messages.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '60px' }}>
             <p style={{ fontSize: '13px', color: '#8E8E8E' }}>No messages yet</p>

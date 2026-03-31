@@ -118,10 +118,10 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'flex-end',
           background: '#121212',
         }}
       >
+        <div style={{ flex: 1 }} />
         {messages.length === 0 ? (
           <div style={{ textAlign: 'center', marginTop: '60px' }}>
             <p style={{ fontSize: '13px', color: '#555' }}>No messages yet</p>
