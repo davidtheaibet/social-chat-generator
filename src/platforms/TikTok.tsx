@@ -1,4 +1,4 @@
-import { useAppStore } from '../stores/appStore';
+import { useAppStore, type Message } from '../stores/appStore';
 
 interface TikTokPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -42,8 +42,9 @@ const StatusBar: React.FC = () => (
 export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) => {
   const { contact, messages } = useAppStore();
 
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+  const formatTime = (message: Message) =>
+    message.customTimestamp ||
+    message.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
 
   return (
     <div
@@ -164,7 +165,7 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
                   <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
                 )}
                 <p style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)', margin: '2px 0 0', textAlign: 'right' }}>
-                  {formatTime(message.timestamp)}
+                  {formatTime(message)}
                 </p>
               </div>
             </div>

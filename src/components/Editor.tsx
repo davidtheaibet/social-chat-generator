@@ -55,6 +55,7 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
     setContact,
     addMessage,
     editMessage,
+    setMessageTimestamp,
     deleteMessage,
     clearMessages,
     messages,
@@ -63,8 +64,12 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
 
   const [messageText, setMessageText] = useState('');
   const [sender, setSender] = useState<'me' | 'contact'>('me');
+  const [customTime, setCustomTime] = useState('');
+  const [customDate, setCustomDate] = useState('');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState('');
+  const [editingTimestampId, setEditingTimestampId] = useState<string | null>(null);
+  const [editingTimestampValue, setEditingTimestampValue] = useState('');
   const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
   const editInputRef = useRef<HTMLInputElement>(null);
 
@@ -79,13 +84,21 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
   const handleAddMessage = () => {
     if (!messageText.trim()) return;
     if (!isPremium && messages.length >= 20) return;
+    const customTimestamp = customTime.trim()
+      ? customDate.trim()
+        ? `${customTime.trim()} ${customDate.trim()}`
+        : customTime.trim()
+      : undefined;
     addMessage({
       type: 'text',
       content: messageText,
       sender,
+      customTimestamp,
       status: sender === 'me' ? 'read' : undefined,
     });
     setMessageText('');
+    setCustomTime('');
+    setCustomDate('');
   };
 
   const startEdit = (id: string, content: string) => {
@@ -235,6 +248,28 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
             ))}
           </div>
 
+          {/* Timestamp inputs */}
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+            <input
+              className="input-field"
+              style={{ flex: 1 }}
+              type="text"
+              value={customTime}
+              onChange={(e) => setCustomTime(e.target.value)}
+              placeholder="Time (HH:MM)"
+              maxLength={5}
+            />
+            <input
+              className="input-field"
+              style={{ flex: 1 }}
+              type="text"
+              value={customDate}
+              onChange={(e) => setCustomDate(e.target.value)}
+              placeholder="Date (DD/MM) optional"
+              maxLength={5}
+            />
+          </div>
+
           {/* Message input + add button */}
           <div style={{ display: 'flex', gap: '8px' }}>
             <input
@@ -331,18 +366,65 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
                     }}
                   />
                 ) : (
-                  <span
-                    style={{
-                      flex: 1,
-                      fontSize: '13px',
-                      color: '#374151',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {msg.content}
-                  </span>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <span
+                      style={{
+                        fontSize: '13px',
+                        color: '#374151',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        display: 'block',
+                      }}
+                    >
+                      {msg.content}
+                    </span>
+                    {editingTimestampId === msg.id ? (
+                      <input
+                        autoFocus
+                        value={editingTimestampValue}
+                        onChange={(e) => setEditingTimestampValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            setMessageTimestamp(msg.id, editingTimestampValue);
+                            setEditingTimestampId(null);
+                          }
+                          if (e.key === 'Escape') setEditingTimestampId(null);
+                        }}
+                        onBlur={() => {
+                          setMessageTimestamp(msg.id, editingTimestampValue);
+                          setEditingTimestampId(null);
+                        }}
+                        placeholder="HH:MM or HH:MM DD/MM"
+                        style={{
+                          fontSize: '11px',
+                          padding: '1px 6px',
+                          border: '1px solid #6366F1',
+                          borderRadius: '4px',
+                          outline: 'none',
+                          fontFamily: 'inherit',
+                          width: '100%',
+                          marginTop: '2px',
+                        }}
+                      />
+                    ) : (
+                      <span
+                        onClick={() => {
+                          setEditingTimestampId(msg.id);
+                          setEditingTimestampValue(msg.customTimestamp || '');
+                        }}
+                        style={{
+                          fontSize: '11px',
+                          color: msg.customTimestamp ? '#6366F1' : '#9CA3AF',
+                          cursor: 'pointer',
+                          display: 'block',
+                        }}
+                        title="Click to set timestamp"
+                      >
+                        {msg.customTimestamp || 'set time...'}
+                      </span>
+                    )}
+                  </div>
                 )}
                 <div style={{ display: 'flex', gap: '4px', flexShrink: 0 }}>
                   {editingId === msg.id ? (

@@ -8,6 +8,7 @@ export interface Message {
   content: string;
   sender: 'me' | 'contact';
   timestamp: Date;
+  customTimestamp?: string; // User-set HH:MM or "HH:MM DD/MM"
   status?: 'sent' | 'delivered' | 'read';
 }
 
@@ -32,6 +33,7 @@ interface AppState {
   messages: Message[];
   addMessage: (message: Omit<Message, 'id' | 'timestamp'>) => void;
   editMessage: (id: string, content: string) => void;
+  setMessageTimestamp: (id: string, customTimestamp: string) => void;
   deleteMessage: (id: string) => void;
   clearMessages: () => void;
   
@@ -64,8 +66,13 @@ export const useAppStore = create<AppState>((set) => ({
     }],
   })),
   editMessage: (id, content) => set((state) => ({
-    messages: state.messages.map((m) => 
+    messages: state.messages.map((m) =>
       m.id === id ? { ...m, content } : m
+    ),
+  })),
+  setMessageTimestamp: (id, customTimestamp) => set((state) => ({
+    messages: state.messages.map((m) =>
+      m.id === id ? { ...m, customTimestamp: customTimestamp.trim() || undefined } : m
     ),
   })),
   deleteMessage: (id) => set((state) => ({

@@ -210,8 +210,9 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
 };
 
 const WhatsAppBubble: React.FC<{ message: Message; sameSenderAsPrev: boolean; isFirst: boolean }> = ({ message, sameSenderAsPrev, isFirst }) => {
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+  const formatTime = (message: Message) =>
+    message.customTimestamp ||
+    message.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
 
   const isMe = message.sender === 'me';
   const marginTop = isFirst ? '0' : (sameSenderAsPrev ? '2px' : '8px');
@@ -278,7 +279,7 @@ const WhatsAppBubble: React.FC<{ message: Message; sameSenderAsPrev: boolean; is
           </p>
         )}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '3px', marginTop: '2px' }}>
-          <span style={{ fontSize: '11px', color: '#667781' }}>{formatTime(message.timestamp)}</span>
+          <span style={{ fontSize: '11px', color: '#667781' }}>{formatTime(message)}</span>
           {isMe && getStatusIcon(message.status)}
         </div>
       </div>

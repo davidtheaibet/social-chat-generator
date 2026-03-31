@@ -1,4 +1,4 @@
-import { useAppStore } from '../stores/appStore';
+import { useAppStore, type Message } from '../stores/appStore';
 
 interface SnapchatPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -42,8 +42,9 @@ const StatusBar: React.FC = () => (
 export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }) => {
   const { contact, messages } = useAppStore();
 
-  const formatTime = (date: Date) =>
-    date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
+  const formatTime = (message: Message) =>
+    message.customTimestamp ||
+    message.timestamp.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
 
   return (
     <div
@@ -166,7 +167,7 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
                   <p style={{ fontSize: '14px', margin: 0, lineHeight: 1.4 }}>{message.content}</p>
                 )}
                 <p style={{ fontSize: '11px', color: 'rgba(0,0,0,0.4)', margin: '2px 0 0', textAlign: 'right' }}>
-                  {formatTime(message.timestamp)}
+                  {formatTime(message)}
                   {message.sender === 'me' && ' ✓'}
                 </p>
               </div>
