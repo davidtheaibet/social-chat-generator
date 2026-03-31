@@ -130,6 +130,7 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
           padding: '10px 10px',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'flex-end',
         }}
       >
         {messages.length === 0 ? (

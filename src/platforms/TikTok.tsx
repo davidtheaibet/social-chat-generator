@@ -118,6 +118,7 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'flex-end',
           background: '#121212',
         }}
       >

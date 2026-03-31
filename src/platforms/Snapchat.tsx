@@ -119,6 +119,7 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
           padding: '10px',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'flex-end',
           background: 'white',
         }}
       >

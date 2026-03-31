@@ -143,6 +143,7 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'flex-end',
           background: 'white',
         }}
       >

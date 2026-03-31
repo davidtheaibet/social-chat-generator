@@ -119,6 +119,7 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
           padding: '12px 10px',
           display: 'flex',
           flexDirection: 'column',
+          justifyContent: 'flex-end',
         }}
       >
         {messages.length === 0 ? (

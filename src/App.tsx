@@ -15,13 +15,6 @@ const API_BASE = import.meta.env.VITE_API_BASE ?? '';
 
 type MobileTab = 'editor' | 'preview';
 
-// Minimal ChatFake logo icon
-const ChatFakeLogo = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <rect width="20" height="20" rx="5" fill="#6366F1" />
-    <path d="M5 7h10M5 10h7M5 13h5" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
-  </svg>
-);
 
 function App() {
   const { currentPlatform, isPremium, setPremium, messages } = useAppStore();
@@ -103,7 +96,7 @@ function App() {
           ctx.textBaseline = 'bottom';
           ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
           ctx.shadowBlur = 4;
-          const text = 'ChatFake.app';
+          const text = 'mysocialgenerator.com';
           const x = canvas.width - ctx.measureText(text).width - 16;
           const y = canvas.height - 16;
           ctx.fillText(text, x, y);
@@ -205,9 +198,8 @@ function App() {
           style={{ padding: '0 32px' }}
         >
           <div className="flex items-center gap-2">
-            <ChatFakeLogo />
             <span style={{ fontSize: '16px', fontWeight: 600, color: '#111827' }}>
-              ChatFake
+              Social Chat Generator
             </span>
           </div>
           <button
