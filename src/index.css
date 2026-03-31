@@ -70,3 +70,7 @@ body {
 .input-field::placeholder {
   color: #9CA3AF;
 }
+
+.whatsapp-input::placeholder {
+  color: #8696A0;
+}

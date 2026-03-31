@@ -167,14 +167,27 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
             background: 'white',
             borderRadius: '21px',
             height: '42px',
-            padding: '0 12px 0 16px',
+            padding: '0 10px',
             display: 'flex',
             alignItems: 'center',
-            boxShadow: '0 1px 2px rgba(0,0,0,0.1)',
+            boxShadow: '0 1px 2px rgba(0,0,0,0.08)',
           }}
         >
           <Smile style={{ width: 20, height: 20, color: '#54656F', flexShrink: 0, marginRight: '8px' }} />
-          <span style={{ flex: 1, fontSize: '15px', color: '#8696A0' }}>Message</span>
+          <input
+            readOnly
+            placeholder="Message"
+            className="whatsapp-input"
+            style={{
+              flex: 1,
+              fontSize: '15px',
+              color: '#111',
+              border: 'none',
+              outline: 'none',
+              background: 'transparent',
+              fontFamily: 'inherit',
+            }}
+          />
           <Camera style={{ width: 20, height: 20, color: '#54656F', flexShrink: 0, marginLeft: '8px' }} />
         </div>
         <div
