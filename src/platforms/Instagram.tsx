@@ -121,8 +121,14 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
             />
           </div>
           <div>
-            <div style={{ fontWeight: 600, fontSize: '15px', color: '#262626', lineHeight: 1.2 }}>
+            <div style={{ fontWeight: 600, fontSize: '15px', color: '#262626', lineHeight: 1.2, display: 'flex', alignItems: 'center', gap: '4px' }}>
               {contact.name}
+              {contact.verified && (
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ flexShrink: 0 }}>
+                  <circle cx="12" cy="12" r="12" fill="#3897f0" />
+                  <path d="M7 12.5l3.5 3.5 6.5-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              )}
             </div>
             <div style={{ fontSize: '12px', color: '#65676B', lineHeight: 1 }}>
               {contact.status || 'Active now'}

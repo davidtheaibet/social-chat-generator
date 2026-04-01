@@ -228,9 +228,9 @@ function App() {
         </div>
       </header>
 
-      {/* Mobile tab switcher */}
+      {/* Editor / Preview tab switcher — all screen sizes */}
       <div
-        className="lg:hidden flex bg-white sticky z-30"
+        className="flex bg-white sticky z-30"
         style={{ top: '56px', borderBottom: '1px solid #F3F4F6' }}
       >
         {(['editor', 'preview'] as MobileTab[]).map((tab) => (
@@ -250,49 +250,49 @@ function App() {
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto" style={{ padding: '32px 32px' }}>
-        {/* Desktop: 40/60 split */}
-        <div className="hidden lg:flex gap-8 items-start">
-          <div style={{ width: '40%' }}>
-            <Editor onUpgradeClick={() => setShowUpgrade(true)} />
-          </div>
+        {mobileTab === 'editor' ? (
+          /* Editor mode: side-by-side on desktop, editor only on mobile */
+          <>
+            <div className="hidden lg:flex gap-8 items-start">
+              <div style={{ width: '40%' }}>
+                <Editor onUpgradeClick={() => setShowUpgrade(true)} />
+              </div>
+              <div
+                style={{ width: '60%' }}
+                className="flex items-center justify-center"
+              >
+                <div
+                  className="w-full flex flex-col items-center justify-center"
+                  style={{
+                    background: 'white',
+                    borderRadius: '16px',
+                    boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+                    padding: '40px 24px',
+                    minHeight: '720px',
+                  }}
+                >
+                  {PhonePreview}
+                </div>
+              </div>
+            </div>
+            <div className="lg:hidden">
+              <Editor onUpgradeClick={() => setShowUpgrade(true)} />
+            </div>
+          </>
+        ) : (
+          /* Preview mode: phone mockup only, no editor controls */
           <div
-            style={{ width: '60%' }}
-            className="flex items-center justify-center"
+            className="flex flex-col items-center"
+            style={{
+              background: 'white',
+              borderRadius: '16px',
+              boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
+              padding: '40px 24px',
+            }}
           >
-            <div
-              className="w-full flex flex-col items-center justify-center"
-              style={{
-                background: 'white',
-                borderRadius: '16px',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                padding: '40px 24px',
-                minHeight: '720px',
-              }}
-            >
-              {PhonePreview}
-            </div>
+            {PhonePreview}
           </div>
-        </div>
-
-        {/* Mobile: tab-switched */}
-        <div className="lg:hidden">
-          {mobileTab === 'editor' && (
-            <Editor onUpgradeClick={() => setShowUpgrade(true)} />
-          )}
-          {mobileTab === 'preview' && (
-            <div
-              className="flex flex-col items-center"
-              style={{
-                background: 'white',
-                borderRadius: '16px',
-                boxShadow: '0 2px 12px rgba(0,0,0,0.08)',
-                padding: '32px 16px',
-              }}
-            >
-              {PhonePreview}
-            </div>
-          )}
-        </div>
+        )}
       </main>
 
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}

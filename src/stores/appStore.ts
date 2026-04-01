@@ -16,6 +16,7 @@ export interface Contact {
   name: string;
   photo?: string;
   status: string;
+  verified?: boolean;
 }
 
 export type Platform = 'whatsapp' | 'instagram' | 'snapchat' | 'messenger' | 'tiktok';

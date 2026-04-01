@@ -177,7 +177,7 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
         )}
       </div>
 
-      {/* Input area */}
+      {/* Input area — real Messenger: + | camera | gallery | mic | [Aa] | 👍 */}
       <div
         style={{
           padding: '8px 10px',
@@ -187,19 +187,48 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
           borderTop: '1px solid #F0F2F5',
         }}
       >
-        <span style={{ fontSize: '20px' }}>➕</span>
-        <span style={{ fontSize: '20px' }}>📷</span>
-        <div
-          style={{
-            flex: 1,
-            background: '#F0F2F5',
-            borderRadius: '20px',
-            padding: '7px 14px',
-          }}
-        >
+        {/* + button */}
+        <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexShrink: 0 }}>
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <circle cx="13" cy="13" r="13" fill="#0084FF" />
+            <path d="M13 8v10M8 13h10" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+          </svg>
+        </button>
+        {/* Camera */}
+        <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="#0084FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <circle cx="12" cy="13" r="4" stroke="#0084FF" strokeWidth="1.8" />
+          </svg>
+        </button>
+        {/* Gallery */}
+        <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="3" width="18" height="18" rx="2" stroke="#0084FF" strokeWidth="1.8" />
+            <circle cx="8.5" cy="8.5" r="1.5" fill="#0084FF" />
+            <path d="M21 15l-5-5L5 21" stroke="#0084FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </button>
+        {/* Microphone */}
+        <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexShrink: 0 }}>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <rect x="9" y="2" width="6" height="11" rx="3" stroke="#0084FF" strokeWidth="1.8" />
+            <path d="M5 10a7 7 0 0 0 14 0" stroke="#0084FF" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="12" y1="17" x2="12" y2="21" stroke="#0084FF" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="9" y1="21" x2="15" y2="21" stroke="#0084FF" strokeWidth="1.8" strokeLinecap="round" />
+          </svg>
+        </button>
+        {/* Text input */}
+        <div style={{ flex: 1, background: '#F0F2F5', borderRadius: '20px', padding: '7px 14px', minWidth: 0 }}>
           <span style={{ fontSize: '13px', color: '#65676B' }}>Aa</span>
         </div>
-        <span style={{ fontSize: '20px' }}>👍</span>
+        {/* Thumbs up */}
+        <button style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', flexShrink: 0 }}>
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
+            <path d="M10 21H6a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h4" stroke="#0084FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M10 21V10l3-7c1.1 0 2 .9 2 2v4h4.5a2 2 0 0 1 1.96 2.4l-1.5 7a2 2 0 0 1-1.96 1.6H10z" fill="#0084FF" />
+          </svg>
+        </button>
       </div>
     </div>
   );

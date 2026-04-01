@@ -215,6 +215,24 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick: _onUpgradeClick 
           />
         </div>
 
+        {/* Instagram verified badge toggle */}
+        {currentPlatform === 'instagram' && (
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', userSelect: 'none' }}>
+              <input
+                type="checkbox"
+                checked={!!contact.verified}
+                onChange={(e) => setContact({ verified: e.target.checked })}
+                style={{ width: '16px', height: '16px', accentColor: '#3897f0', cursor: 'pointer' }}
+              />
+              <span style={{ fontSize: '13px', fontWeight: 500, color: '#374151', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                Verified account
+                <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '16px', height: '16px', borderRadius: '50%', background: '#3897f0', color: 'white', fontSize: '9px', fontWeight: 700 }}>✓</span>
+              </span>
+            </label>
+          </div>
+        )}
+
         {/* Divider */}
         <div style={{ borderTop: '1px solid #F3F4F6', marginBottom: '20px' }} />
 
