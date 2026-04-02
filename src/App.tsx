@@ -83,8 +83,12 @@ function App() {
     try {
       const canvas = await html2canvas(previewRef.current, {
         useCORS: true,
+        allowTaint: false,
         scale: 2,
         backgroundColor: null,
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
       });
 
       if (!isPremium) {
@@ -104,10 +108,27 @@ function App() {
         }
       }
 
-      const link = document.createElement('a');
-      link.download = `chat-${currentPlatform}-${Date.now()}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
+      const filename = `chat-${currentPlatform}-${Date.now()}.png`;
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+      if (isIOS) {
+        // iOS Safari ignores <a download> — use Web Share API or open in new tab
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+        if (!blob) throw new Error('Canvas export failed');
+        const file = new File([blob], filename, { type: 'image/png' });
+        if (typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] })) {
+          await navigator.share({ files: [file] });
+        } else {
+          const url = URL.createObjectURL(blob);
+          const newTab = window.open(url, '_blank');
+          if (!newTab) window.location.href = url;
+        }
+      } else {
+        const link = document.createElement('a');
+        link.download = filename;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+      }
     } catch (error) {
       console.error('Export failed:', error);
       alert('Export failed. Please try again.');
