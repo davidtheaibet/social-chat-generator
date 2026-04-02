@@ -208,7 +208,7 @@ function App() {
         >
           <div className="flex items-center gap-2">
             <span style={{ fontSize: '16px', fontWeight: 600, color: '#111827' }}>
-              Social Chat Generator
+              My Social Generator
             </span>
           </div>
           {isPremium ? (
