@@ -1,4 +1,5 @@
 import { useAppStore } from '../stores/appStore';
+import { WatermarkOverlay } from '../components/WatermarkOverlay';
 
 interface MessengerPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -176,6 +177,9 @@ export const MessengerPreview: React.FC<MessengerPreviewProps> = ({ containerRef
           })
         )}
       </div>
+
+      {/* Watermark */}
+      <WatermarkOverlay />
 
       {/* Input area — real Messenger: + | camera | gallery | mic | [Aa] | 👍 */}
       <div

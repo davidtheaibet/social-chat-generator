@@ -1,4 +1,5 @@
 import { useAppStore, type Message } from '../stores/appStore';
+import { WatermarkOverlay } from '../components/WatermarkOverlay';
 
 interface SnapchatPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -177,6 +178,9 @@ export const SnapchatPreview: React.FC<SnapchatPreviewProps> = ({ containerRef }
           })
         )}
       </div>
+
+      {/* Watermark */}
+      <WatermarkOverlay />
 
       {/* Input area */}
       <div

@@ -1,4 +1,5 @@
 import { useAppStore, type Message } from '../stores/appStore';
+import { WatermarkOverlay } from '../components/WatermarkOverlay';
 
 interface TikTokPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -174,6 +175,9 @@ export const TikTokPreview: React.FC<TikTokPreviewProps> = ({ containerRef }) =>
           })
         )}
       </div>
+
+      {/* Watermark */}
+      <WatermarkOverlay />
 
       {/* Input area */}
       <div

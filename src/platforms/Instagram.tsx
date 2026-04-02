@@ -1,4 +1,5 @@
 import { useAppStore } from '../stores/appStore';
+import { WatermarkOverlay } from '../components/WatermarkOverlay';
 
 interface InstagramPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -225,6 +226,9 @@ export const InstagramPreview: React.FC<InstagramPreviewProps> = ({ containerRef
           })
         )}
       </div>
+
+      {/* Watermark */}
+      <WatermarkOverlay />
 
       {/* Input area — real Instagram DM composer */}
       <div

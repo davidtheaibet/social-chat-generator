@@ -1,5 +1,6 @@
 import { useAppStore, type Message } from '../stores/appStore';
 import { Check, CheckCheck, Mic, Camera, Smile, Paperclip } from 'lucide-react';
+import { WatermarkOverlay } from '../components/WatermarkOverlay';
 
 interface WhatsAppPreviewProps {
   containerRef: React.RefObject<HTMLDivElement | null>;
@@ -149,6 +150,9 @@ export const WhatsAppPreview: React.FC<WhatsAppPreviewProps> = ({ containerRef }
           ))
         )}
       </div>
+
+      {/* Watermark */}
+      <WatermarkOverlay />
 
       {/* Input area */}
       <div
