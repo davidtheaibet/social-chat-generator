@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAppStore, type Platform } from '../stores/appStore';
-import { Trash2, Plus, Pencil, Check, X } from 'lucide-react';
+import { Trash2, Plus, Pencil, Check, X, Crown } from 'lucide-react';
 import { DragDropPhoto } from './DragDropPhoto';
 
 interface EditorProps {
@@ -47,7 +47,7 @@ const PlatformIcon: React.FC<{ platform: string; active: boolean }> = ({ platfor
   );
 };
 
-export const Editor: React.FC<EditorProps> = ({ onUpgradeClick: _onUpgradeClick }) => {
+export const Editor: React.FC<EditorProps> = ({ onUpgradeClick }) => {
   const {
     currentPlatform,
     setPlatform,
@@ -508,11 +508,51 @@ export const Editor: React.FC<EditorProps> = ({ onUpgradeClick: _onUpgradeClick 
           </button>
           <span style={{ fontSize: '12px', color: '#9CA3AF' }}>
             {messages.length} / {isPremium ? '∞' : '20'}
-            {!isPremium && messages.length >= 20 && (
-              <span style={{ color: '#EF4444', marginLeft: '4px' }}>Limit reached</span>
-            )}
           </span>
         </div>
+
+        {/* Upgrade nudge when free user hits message limit */}
+        {!isPremium && messages.length >= 20 && onUpgradeClick && (
+          <div
+            style={{
+              marginTop: '12px',
+              padding: '12px 14px',
+              borderRadius: '10px',
+              background: 'linear-gradient(135deg, #EEF2FF, #F5F3FF)',
+              border: '1.5px solid #C7D2FE',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '10px',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Crown style={{ width: 16, height: 16, color: '#F59E0B', flexShrink: 0 }} />
+              <span style={{ fontSize: '13px', color: '#374151', fontWeight: 500 }}>
+                20-message limit reached
+              </span>
+            </div>
+            <button
+              onClick={onUpgradeClick}
+              style={{
+                height: '32px',
+                padding: '0 14px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                color: 'white',
+                fontSize: '13px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                whiteSpace: 'nowrap',
+                fontFamily: 'inherit',
+                boxShadow: '0 2px 8px rgba(99,102,241,0.35)',
+              }}
+            >
+              Upgrade — Unlimited
+            </button>
+          </div>
+        )}
       </div>
 
     </div>

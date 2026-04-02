@@ -8,7 +8,7 @@ import { InstagramPreview } from './platforms/Instagram';
 import { SnapchatPreview } from './platforms/Snapchat';
 import { MessengerPreview } from './platforms/Messenger';
 import { TikTokPreview } from './platforms/TikTok';
-import { Camera } from 'lucide-react';
+import { Camera, Crown, X as CloseIcon } from 'lucide-react';
 import html2canvas from 'html2canvas';
 
 const API_BASE = import.meta.env.VITE_API_BASE ?? '';
@@ -21,6 +21,7 @@ function App() {
   const previewRef = useRef<HTMLDivElement | null>(null);
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>('editor');
+  const [upgradeBannerDismissed, setUpgradeBannerDismissed] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -223,29 +224,58 @@ function App() {
               Social Chat Generator
             </span>
           </div>
-          <button
-            onClick={() => setShowUpgrade(true)}
-            className="transition-colors"
-            style={{
-              height: '36px',
-              padding: '0 16px',
-              borderRadius: '8px',
-              border: '1.5px solid #6366F1',
-              color: '#6366F1',
-              fontSize: '14px',
-              fontWeight: 600,
-              background: 'white',
-              cursor: 'pointer',
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLButtonElement).style.background = '#EEF2FF';
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLButtonElement).style.background = 'white';
-            }}
-          >
-            {isPremium ? '✦ Premium' : 'Upgrade'}
-          </button>
+          {isPremium ? (
+            <span
+              style={{
+                height: '36px',
+                padding: '0 14px',
+                borderRadius: '8px',
+                border: '1.5px solid #6366F1',
+                color: '#6366F1',
+                fontSize: '14px',
+                fontWeight: 600,
+                background: '#EEF2FF',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              <Crown style={{ width: 14, height: 14, color: '#F59E0B' }} />
+              Premium
+            </span>
+          ) : (
+            <button
+              onClick={() => setShowUpgrade(true)}
+              style={{
+                height: '36px',
+                padding: '0 16px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'linear-gradient(135deg, #6366F1, #8B5CF6)',
+                color: 'white',
+                fontSize: '14px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                boxShadow: '0 2px 10px rgba(99,102,241,0.4)',
+                transition: 'opacity 0.15s, transform 0.15s',
+                fontFamily: 'inherit',
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.opacity = '0.9';
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.opacity = '1';
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)';
+              }}
+            >
+              <Crown style={{ width: 14, height: 14 }} />
+              Remove Watermark
+            </button>
+          )}
         </div>
       </header>
 
@@ -268,6 +298,60 @@ function App() {
           </button>
         ))}
       </div>
+
+      {/* Upgrade nudge banner — free users only */}
+      {!isPremium && !upgradeBannerDismissed && (
+        <div
+          style={{
+            background: 'linear-gradient(90deg, #EEF2FF, #F5F3FF)',
+            borderBottom: '1px solid #E0E7FF',
+            padding: '10px 32px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '12px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+            <Crown style={{ width: 16, height: 16, color: '#F59E0B', flexShrink: 0 }} />
+            <span style={{ fontSize: '13px', color: '#374151' }}>
+              Your exports include a watermark.{' '}
+              <button
+                onClick={() => setShowUpgrade(true)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#6366F1',
+                  fontWeight: 700,
+                  fontSize: '13px',
+                  cursor: 'pointer',
+                  padding: 0,
+                  fontFamily: 'inherit',
+                  textDecoration: 'underline',
+                }}
+              >
+                Upgrade to remove it
+              </button>{' '}
+              — $9.99 lifetime.
+            </span>
+          </div>
+          <button
+            onClick={() => setUpgradeBannerDismissed(true)}
+            style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              color: '#9CA3AF',
+              padding: '2px',
+              lineHeight: 0,
+              flexShrink: 0,
+            }}
+            aria-label="Dismiss"
+          >
+            <CloseIcon style={{ width: 14, height: 14 }} />
+          </button>
+        </div>
+      )}
 
       {/* Main content */}
       <main className="max-w-7xl mx-auto" style={{ padding: '32px 32px' }}>
