@@ -92,22 +92,9 @@ function App() {
         scrollY: 0,
       });
 
-      if (!isPremium) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.save();
-          ctx.font = '14px Inter, -apple-system, sans-serif';
-          ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
-          ctx.textBaseline = 'bottom';
-          ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-          ctx.shadowBlur = 4;
-          const text = 'mysocialgenerator.com';
-          const x = canvas.width - ctx.measureText(text).width - 16;
-          const y = canvas.height - 16;
-          ctx.fillText(text, x, y);
-          ctx.restore();
-        }
-      }
+      // Watermark is rendered inside previewRef via WatermarkOverlay and captured by html2canvas.
+      // No additional canvas drawing needed — adding it here would create a double-watermark
+      // mismatch between the on-screen preview and the exported image.
 
       const filename = `chat-${currentPlatform}-${Date.now()}.png`;
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
