@@ -22,6 +22,7 @@ function App() {
   const [showUpgrade, setShowUpgrade] = useState(false);
   const [mobileTab, setMobileTab] = useState<MobileTab>('editor');
   const [upgradeBannerDismissed, setUpgradeBannerDismissed] = useState(false);
+  const [exportPreview, setExportPreview] = useState<{ dataUrl: string; filename: string } | null>(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -97,24 +98,17 @@ function App() {
       // mismatch between the on-screen preview and the exported image.
 
       const filename = `chat-${currentPlatform}-${Date.now()}.png`;
+      const dataUrl = canvas.toDataURL('image/png');
       const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 
       if (isIOS) {
-        // iOS Safari ignores <a download> — use Web Share API or open in new tab
-        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
-        if (!blob) throw new Error('Canvas export failed');
-        const file = new File([blob], filename, { type: 'image/png' });
-        if (typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] })) {
-          await navigator.share({ files: [file] });
-        } else {
-          const url = URL.createObjectURL(blob);
-          const newTab = window.open(url, '_blank');
-          if (!newTab) window.location.href = url;
-        }
+        // iOS Safari blocks programmatic downloads — show the image in an overlay
+        // so the user can long-press → "Save to Photos" / "Add to Photos"
+        setExportPreview({ dataUrl, filename });
       } else {
         const link = document.createElement('a');
         link.download = filename;
-        link.href = canvas.toDataURL('image/png');
+        link.href = dataUrl;
         link.click();
       }
     } catch (error) {
@@ -207,9 +201,11 @@ function App() {
           style={{ padding: '0 32px' }}
         >
           <div className="flex items-center gap-2">
-            <span style={{ fontSize: '16px', fontWeight: 600, color: '#111827' }}>
-              My Social Generator
-            </span>
+            <img
+              src="/logo.jpg"
+              alt="My Social Generator"
+              style={{ height: '32px', width: 'auto', objectFit: 'contain' }}
+            />
           </div>
           {isPremium ? (
             <span
@@ -275,10 +271,20 @@ function App() {
           <button
             key={tab}
             onClick={() => setMobileTab(tab)}
-            className="flex-1 py-3 text-sm font-semibold capitalize transition-colors"
             style={{
+              flex: 1,
+              minHeight: '52px',
+              padding: '14px 0',
+              fontSize: '15px',
+              fontWeight: 700,
+              fontFamily: 'inherit',
+              textTransform: 'capitalize',
+              background: 'none',
+              border: 'none',
               borderBottom: mobileTab === tab ? '2px solid #6366F1' : '2px solid transparent',
               color: mobileTab === tab ? '#6366F1' : '#6B7280',
+              cursor: 'pointer',
+              transition: 'color 0.15s, border-color 0.15s',
             }}
           >
             {tab}
@@ -388,6 +394,82 @@ function App() {
       </main>
 
       {showUpgrade && <UpgradeModal onClose={() => setShowUpgrade(false)} />}
+
+      {/* iOS export preview — long-press the image to save to Photos */}
+      {exportPreview && (
+        <div
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'rgba(0,0,0,0.85)',
+            padding: '24px 16px',
+          }}
+          onClick={() => setExportPreview(null)}
+        >
+          <div
+            style={{ position: 'relative', maxWidth: '340px', width: '100%' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setExportPreview(null)}
+              aria-label="Close"
+              style={{
+                position: 'absolute',
+                top: '-40px',
+                right: 0,
+                background: 'none',
+                border: 'none',
+                color: 'white',
+                cursor: 'pointer',
+                padding: '8px',
+                lineHeight: 0,
+              }}
+            >
+              <CloseIcon style={{ width: 24, height: 24 }} />
+            </button>
+            <img
+              src={exportPreview.dataUrl}
+              alt="Export preview"
+              style={{
+                width: '100%',
+                borderRadius: '12px',
+                display: 'block',
+                boxShadow: '0 8px 32px rgba(0,0,0,0.5)',
+              }}
+            />
+            <p
+              style={{
+                color: 'white',
+                textAlign: 'center',
+                marginTop: '16px',
+                fontSize: '15px',
+                fontWeight: 600,
+              }}
+            >
+              Tap and hold the image → Save to Photos
+            </p>
+            <a
+              href={exportPreview.dataUrl}
+              download={exportPreview.filename}
+              style={{
+                display: 'block',
+                marginTop: '12px',
+                textAlign: 'center',
+                color: '#A5B4FC',
+                fontSize: '13px',
+                textDecoration: 'underline',
+              }}
+            >
+              Or tap here to download
+            </a>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

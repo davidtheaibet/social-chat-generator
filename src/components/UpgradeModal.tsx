@@ -34,8 +34,16 @@ export const UpgradeModal: React.FC<UpgradeModalProps> = ({ onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center px-4"
-      style={{ background: 'rgba(0,0,0,0.65)' }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 9999,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '0 16px',
+        background: 'rgba(0,0,0,0.65)',
+      }}
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
       <div
